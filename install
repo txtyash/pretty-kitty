@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-## Author  : Aditya Shakya
-## Twitter : @adi1090x
-## Github  : @adi1090x
-## Reddit  : @adi1090x
+## Author  : Zim Muller
+## Github  : @zim0369
+## Reddit  : @zim0369
 
-## Kitty-cat installer script
+## kitty installer script
+##
 
 ## ANSI Colors (FG & BG)
 RED="$(printf '\033[31m')"  GREEN="$(printf '\033[32m')"  ORANGE="$(printf '\033[33m')"  BLUE="$(printf '\033[34m')"
@@ -22,12 +22,10 @@ KITTY_DIR="$HOME/.config/kitty"
 banner () {
     clear
     echo "
-    ${BLUE}/\___/\ 			          
-    ${BLUE}\ -.- / ${RED} ┃ ┃┛━┏┛━┏┛┃ ┃ ${GREEN} ┏━┛┏━┃━┏┛  
-    ${BLUE}'-.^.-' ${RED} ┏┛ ┃ ┃  ┃ ━┏┛ ${GREEN} ┃  ┏━┃ ┃   
-    ${BLUE}  /'\   ${RED} ┛ ┛┛ ┛  ┛  ┛  ${GREEN} ━━┛┛ ┛ ┛   
-
-    ${BLUE}[${RED}*${BLUE}] ${ORANGE}By- Aditya Shakya ${RED}//${ORANGE} adi1090x"
+    ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
+    ${CYAN}██▓▒­░⡷⠂${RED} 𝓟𝓻𝓮𝓽𝓽𝔂 𝓚𝓲𝓽𝓽𝔂 ${BLUE}🐈 ${CYAN}⠐⢾░▒▓██ 
+    ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
+    "
 }
 
 ## Script Termination
@@ -53,7 +51,7 @@ reset_color() {
 
 ## Prerequisite
 prerequisite() {
-    dependencies=(kitty sed wget)
+    dependencies=(kitty git sed grep egrep find wget)
     for dependency in "${dependencies[@]}"; do
         type -p "$dependency" &>/dev/null || {
 			banner
@@ -66,47 +64,54 @@ prerequisite() {
 ## Check for previous installation
 check_prev () {
 	banner
-	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L /usr/local/bin/pkitty) || (-f /usr/local/bin/pkitty) ]]; then
 		{ echo; echo "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed."; }
-		{ read -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wanna reinstall it? (y/n): ${GREEN}"; echo; }
+		{ read -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; echo; }
 		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
-			install_kcat
+			install_pretty-kitty
 		else
 			{ reset_color; exit; }
 		fi
 	else
-		{ echo; install_kcat; }
+		{ echo; install_pretty-kitty; }
 	fi
 }
 
 ## Install pretty-kitty
-install_kcat () {
+install_pretty-kitty () {
 	echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
 	# Delete old files
-	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation..."${BLUE}
-		{ printf "    "; sudo rm -r /usr/local/bin/pretty-kitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; echo; }
+		{ printf "    "; sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; echo; }
 	fi
-	# Kitty config dir
+	# pretty-kitty config dir
 	if [[ ! -d $KITTY_DIR ]]; then
 		mkdir $KITTY_DIR
 	fi
-	# User Config
-	if [[ -f $KITTY_DIR/kitty.conf ]]; then
-		mv $KITTY_DIR/kitty.conf{,.user}
+     
+	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
+		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Creating one for you..."${BLUE}
+        # sed -i -e 's|program: .*|program: '$SHELL'|g' $DIR/kitty.conf
+	    cp $DIR/kitty.conf $KITTY_DIR
 	fi
-	# Copy new config
-	cp $DIR/kitty.conf $KITTY_DIR
+     
+	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
+		printf 'include ' "${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+	fi
+	
 	# Copying files
 	{ echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory..."${BLUE}; }
 	{ printf "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
-	{ sudo cp -r $DIR/colors /usr/local/share/pretty-kitty/; sudo cp -r $DIR/fonts/* /usr/local/share/fonts/pretty-kitty/; sudo cp -r $DIR/kcat /usr/local/share/pretty-kitty/; }
-	{ sudo chmod +x /usr/local/share/pretty-kitty/kcat; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/kcat /usr/local/bin/pretty-kitty; }
+	{ sudo cp -r $DIR/colors $DIR/pkitty $DIR/kitty.conf /usr/local/share/pretty-kitty/; sudo cp -r $DIR/fonts/* /usr/local/share/fonts/pretty-kitty/; }
+	{ sudo chmod +x /usr/local/share/pretty-kitty/pkitty; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty; }
 
 	# Verify files 
-	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed."; }
-		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pretty-kitty${GREEN}."; echo; }
+		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}."; echo; }
 		{ reset_color; exit 0; }
 	else
 		{ echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; echo; reset_color; exit 1; }
@@ -115,8 +120,9 @@ install_kcat () {
 
 ## Main
 main () {
-	prerequisite
-	check_prev
+	# prerequisite
+	# check_prev
+    banner
 }
 
 main

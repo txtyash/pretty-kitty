@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-## Author  : Aditya Shakya
-## Twitter : @adi1090x
-## Github  : @adi1090x
-## Reddit  : @adi1090x
+## Author  : Zim Muller
+## Github  : @zim0369
+## Reddit  : @zim0369
 
-## Kitty-cat uninstall script
+## pretty-kitty uninstall script
 
 ## ANSI Colors (FG & BG)
 RED="$(printf '\033[31m')"  GREEN="$(printf '\033[32m')"  ORANGE="$(printf '\033[33m')"  BLUE="$(printf '\033[34m')"
@@ -18,12 +17,10 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 banner () {
     clear
     echo "
-    ${BLUE}/\___/\ 			          
-    ${BLUE}\ -.- / ${RED} ┃ ┃┛━┏┛━┏┛┃ ┃ ${GREEN} ┏━┛┏━┃━┏┛  
-    ${BLUE}'-.^.-' ${RED} ┏┛ ┃ ┃  ┃ ━┏┛ ${GREEN} ┃  ┏━┃ ┃   
-    ${BLUE}  /'\   ${RED} ┛ ┛┛ ┛  ┛  ┛  ${GREEN} ━━┛┛ ┛ ┛   
-
-    ${BLUE}[${RED}*${BLUE}] ${ORANGE}By- Aditya Shakya ${RED}//${ORANGE} adi1090x"
+    ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
+    ${CYAN}██▓▒­░⡷⠂${RED} 𝓟𝓻𝓮𝓽𝓽𝔂 𝓚𝓲𝓽𝓽𝔂 ${BLUE}🐈 ${CYAN}⠐⢾░▒▓██ 
+    ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
+    "
 }
 
 ## Script Termination
@@ -50,12 +47,12 @@ reset_color() {
 ## Check for previous installation
 uninstall_tstyle () {
 	banner
-	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Uninstalling pretty-kitty..."; echo; }
 		{ echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Removing files from '/usr/local/share' dir."${BLUE}; }
-		{ printf "    "; sudo rm -r /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty /usr/local/bin/pretty-kitty; sudo fc-cache; }
+		{ printf "    "; sudo rm -r /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty /usr/local/bin/pkitty; sudo fc-cache; }
 		# Verify files
-		if [[ (! -L /usr/local/bin/pretty-kitty) && (! -d /usr/local/share/pretty-kitty) ]]; then
+		if [[ (! -L /usr/local/bin/pkitty) && (! -d /usr/local/share/pretty-kitty) ]]; then
 			{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Uninstalled Successfully."; echo; }
 			{ reset_color; exit 0; }
 		else
