@@ -93,13 +93,14 @@ install_pkitty () {
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
 		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Creating one for you..."${BLUE}
-        # sed -i -e 's|program: .*|program: '$SHELL'|g' $DIR/kitty.conf
 	    cp $DIR/kitty.conf $KITTY_DIR
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please restart kitty after install..."; echo; }
 	fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
 		printf "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please restart kitty after install..."; echo; }
 	fi
 	
 	# Copying files
@@ -111,7 +112,6 @@ install_pkitty () {
 	# Verify files 
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed."; }
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
 		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}."; echo; }
 		{ reset_color; exit 0; }
 	else
