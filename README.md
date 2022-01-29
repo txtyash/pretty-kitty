@@ -1,100 +1,52 @@
-<!-- Links -->
-[bmac]: https://www.buymeacoffee.com/adi1090x
-[ko-fi]: https://ko-fi.com/adi1090x
-[paypal]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U3VK2SSVQWAPN
-[patreon]: https://www.patreon.com/adi1090x
+<h2 align='center'> :unicorn: Pretty-Kitty :unicorn: </h1>
+<h3 align='center'> :jack_o_lantern: Set light/dark themes & fonts for Kitty :christmas_tree: </h1>
 
-# 😺 Kitty Cat
-
-<p align="left">
-  <img src="https://img.shields.io/badge/Maintained%3F-Yes-green?style=for-the-badge">
-  <img src="https://img.shields.io/github/license/adi1090x/pretty-kitty?style=for-the-badge">
-  <img src="https://img.shields.io/github/stars/adi1090x/pretty-kitty?style=for-the-badge">
-  <img src="https://img.shields.io/github/forks/adi1090x/pretty-kitty?color=teal&style=for-the-badge">
-  <img src="https://img.shields.io/github/issues/adi1090x/pretty-kitty?color=violet&style=for-the-badge">
+<p align='center'>
+<img src="images/preview.png" /><br>
+<strong> :sparkle: There's 200+ themes! :sparkle: </strong>
 </p>
 
-Simple script to change color-schemes and fonts for [kitty](https://github.com/kovidgoyal/kitty) terminal.
+### Installation :rainbow:
 
-![gif](images/main.gif) <br />
-
-### How to install
-
-Follow the steps below - 
-
-```bash
-# go to home dir - 
-cd $HOME
-
-# clone this repository - 
-git clone https://github.com/adi1090x/pretty-kitty
-
-# change to pretty-kitty dir -
-cd pretty-kitty
-
-# to install it, run -
+```
+git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty
+```
+cd into the cloned directory:
+```
+cd $HOME/pretty-kitty
+```
+Make the script executable:
+```
+chmod +x *
+```
+Run the installer:
+```
 ./install
+```
+All done! :heavy_check_mark:
 
-# And Follow the steps, it'll be installed on your system.
+Now use command `pkitty`
+
+### Uninstall :broken_heart:
+```
+cd $HOME/pretty-kitty
+./uninstall
 ```
 
-### Run
+### Tip :spiral_notepad:
 
-Run `pretty-kitty` & select the right option -
+For quickly switching theme:
 
-```bash
-$ pretty-kitty
+Dark: `-d` flag
 
-    /\___/\ 			         
-    \ -.- /  ┃ ┃┛━┏┛━┏┛┃ ┃  ┏━┛┏━┃━┏┛  
-    '-.^.-'  ┏┛ ┃ ┃  ┃ ━┏┛  ┃  ┏━┃ ┃   
-      /'\    ┛ ┛┛ ┛  ┛  ┛   ━━┛┛ ┛ ┛   
+Light: `-l` flag
 
-    [*] By- Aditya Shakya // adi1090x
+BTW, Doesn't work on WINDOWS
 
-    [C] Colors (240)
-    [F] Fonts (27)
-    [R] Random
-    [I] Import
-    [A] About
-    [Q] Quit
-    
-    [Select Option]: 
-```
+### Credits :hugs:
 
-### Features
+stewie410: https://www.reddit.com/user/stewie410/ 
 
-+ 240+ popular color-schemes.
-+ 25+ powerline patched fonts.
-+ Randomly change color-schemes.
-+ Import color-schemes from *local file* and *file URL*.
-+ Use `remote api` to set colors in place.
+Aditya Shakya: https://github.com/adi1090x 
 
-### Use Import
-```bash
-    [Select Option]: i
-
-    [L] Local File (Enter path to file)
-    [I] Internet File (Enter File URL)
-
-    [Select Option]: I
-
-    [Enter Color-scheme URL]: https://raw.githubusercontent.com/dexpota/kitty-themes/master/themes/Batman.conf
-
-    [*] Reloading Settings...
-    [*] Applied Successfully.
-```
-
-+ To import *local file*, enter the full path (ie - `/home/aditya/dracula.conf`) of the color-scheme.
-+ To import *web file*, enter the file url (ie - `https://raw.githubusercontent.com/dexpota/kitty-themes/master/themes/Batman.conf`) of the color-scheme.
-<br />
-
-|Sample - Colorschemes|Sample - Fonts|
-|--|--|
-|![img](images/colors.gif)|![img](images/fonts.gif)|
-
-### FYI
-+ Kitty does not support bitmap fonts, i've only got `terminus (ttf)` font work in it.
-+ You've to restart kitty to set the new fonts, as there's no way to set fonts using `kitty remote api`.
-+ Again... If you can improve it, sure...
-+ Have fun!
+Rajasegar: https://github.com/rajasegar
