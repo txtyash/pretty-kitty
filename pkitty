@@ -77,10 +77,10 @@ apply_select () {
     if [[ "$REPLY" =~ ^[l/L/d/D/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[l/L]$ ]]; then
             select_light
-            { reload_settings; reset_color; exit; }   #TODO reload_settings; 
+            { reload_settings; reset_color; exit; }
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
             select_dark
-            { reload_settings; reset_color; exit; } #TODO reload_settings; 
+            { reload_settings; reset_color; exit; }
         fi 
     else
         echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
@@ -204,8 +204,32 @@ apply_fonts () {
     return
 }
 
-# TODO 
 ## Import files
+import_files () {
+    echo "    ${BLUE}[${RED}L${BLUE}] ${ORANGE}Local File (Enter path to file)
+    ${BLUE}[${RED}I${BLUE}] ${ORANGE}Internet File (Enter File URL)"
+    { echo; read -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}" option; echo; }
+
+    temp_file=$(mktemp /tmp/kitty_XXXXXXXXXX.conf)
+
+    if [[ "$option" =~ ^[l/L/i/I]$ ]]; then
+        if [[ "$option" =~ ^[l/L]$ ]]; then
+            { read -p ${BLUE}"    [${RED}Enter Path To Color-scheme${BLUE}]: ${GREEN}" file_path; echo; }
+            cat $file_path > $KITTY_DIR/colors.conf
+            { reload_settings; reset_color; exit; }
+        elif [[ "$option" =~ ^[i/I]$ ]]; then
+            { read -p ${BLUE}"    [${RED}Enter Color-scheme URL${BLUE}]: ${GREEN}" file_link; echo; }
+            wget -o /tmp/log -O $temp_file $file_link
+            cat $temp_file > $KITTY_DIR/colors.conf
+            { reload_settings; reset_color; exit; }
+        fi
+    else
+        echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
+        { sleep 2; banner; echo; import_files; }
+    fi
+}
+
+ 
 update_pkitty () {
     banner; 
     echo "    ${BLUE}[${RED}!${BLUE}] ${RED}UPDATING..."
@@ -244,7 +268,7 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
     { banner; echo;}
 
-    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/u/U/q/Q]$ ]]; then      #validate input
+    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/i/I/u/U/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[s/S]$ ]]; then
             apply_select
         elif [[ "$REPLY" =~ ^[f/F]$ ]]; then
@@ -253,6 +277,8 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
             random_light
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
             random_dark
+        elif [[ "$REPLY" =~ ^[i/I]$ ]]; then
+            import_files
         elif [[ "$REPLY" =~ ^[u/U]$ ]]; then
             update_pkitty
         fi
@@ -303,7 +329,7 @@ main() {
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding colors.conf import to kitty config..."
-		printf 'include ' "${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+		printf "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
         { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
         { reset_color; exit; }
 	fi

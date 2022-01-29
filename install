@@ -99,7 +99,7 @@ install_pkitty () {
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
-		printf 'include ' "${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+		printf "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
 	fi
 	
 	# Copying files
