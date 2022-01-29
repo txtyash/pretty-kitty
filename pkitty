@@ -163,37 +163,6 @@ select_dark () {
     return
 }
  
-random_light () {
-    # Read user selection
-    random_scheme=$(find $LIGHT_DIR -type f -name "*.conf" | shuf -n 1)
-    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
-	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-		printf '%s\n' "Failed to apply theme!" >&2
-		return 1
-	fi
-    { reload_settings; reset_color; exit; }
-}
- 
-random_dark () {
-    # Read user selection
-    random_scheme=$(find $DARK_DIR -type f -name "*.conf" | shuf -n 1)
-    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
-	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-		printf '%s\n' "Failed to apply theme!" >&2
-		return 1
-	fi
-    { reload_settings; reset_color; exit; }
-}
- 
-random_wallpaper () {
-    # Read user selection
-    wallpaper=$(find $WALL_DIR -type f -name "*.png" | shuf -n 1)
-    sed -i -e "s|.*background_image.*|background_image $wallpaper|g" $KITTY_DIR/kitty.conf
-    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Wallpaper Set To: ${wallpaper##*/}"
-    { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
-    { reload_settings; reset_color; exit; }
-}
- 
 select_wallpaper () {
     local count=1
 
@@ -226,6 +195,37 @@ select_wallpaper () {
     return
 }
  
+random_light () {
+    # Read user selection
+    random_scheme=$(find $LIGHT_DIR -type f -name "*.conf" | shuf -n 1)
+    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
+	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
+		printf '%s\n' "Failed to apply theme!" >&2
+		return 1
+	fi
+    { reload_settings; reset_color; exit; }
+}
+ 
+random_dark () {
+    # Read user selection
+    random_scheme=$(find $DARK_DIR -type f -name "*.conf" | shuf -n 1)
+    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
+	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
+		printf '%s\n' "Failed to apply theme!" >&2
+		return 1
+	fi
+    { reload_settings; reset_color; exit; }
+}
+ 
+random_wallpaper () {
+    # Read user selection
+    wallpaper=$(find $WALL_DIR -type f -name "*.png" | shuf -n 1)
+    sed -i -e "s|.*background_image.*|background_image $wallpaper|g" $KITTY_DIR/kitty.conf
+    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Wallpaper Set To: ${wallpaper##*/}"
+    { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+    { reload_settings; reset_color; exit; }
+}
+ 
 remove_wallpaper () {
     # Read user selection
     sed -i -e "s|.*background_image.*|#background_image|g" $KITTY_DIR/kitty.conf
@@ -233,7 +233,6 @@ remove_wallpaper () {
     { reload_settings; reset_color; exit; }
 }
 
-## Apply fonts
 apply_fonts () {
     local count=1
 
@@ -265,48 +264,80 @@ apply_fonts () {
     return
 }
 
-## Import files
-import_files () {
-    echo "    ${BLUE}[${RED}L${BLUE}] ${ORANGE}Local File (Enter path to file)
-    ${BLUE}[${RED}I${BLUE}] ${ORANGE}Internet File (Enter File URL)"
-    { echo; read -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}" option; echo; }
-
-    temp_file=$(mktemp /tmp/kitty_XXXXXXXXXX.conf)
-
-    if [[ "$option" =~ ^[l/L/i/I]$ ]]; then
-        if [[ "$option" =~ ^[l/L]$ ]]; then
-            { read -p ${BLUE}"    [${RED}Enter Path To Color-scheme${BLUE}]: ${GREEN}" file_path; echo; }
-            cat $file_path > $KITTY_DIR/colors.conf
+todo_list () {
+    echo "
+    ${BLUE}[${RED}A${BLUE}] ${GREEN}Add TODOs
+    ${BLUE}[${RED}S${BLUE}] ${GREEN}Show TODOs
+    ${BLUE}[${RED}R${BLUE}] ${GREEN}Remove TODOs
+    "
+    { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
+     
+    if [[ "$REPLY" =~ ^[a/A/s/S/r/R/q/Q]$ ]]; then      #validate input
+        if [[ "$REPLY" =~ ^[a/A]$ ]]; then
+            add_todo
             { reload_settings; reset_color; exit; }
-        elif [[ "$option" =~ ^[i/I]$ ]]; then
-            { read -p ${BLUE}"    [${RED}Enter Color-scheme URL${BLUE}]: ${GREEN}" file_link; echo; }
-            wget -o /tmp/log -O $temp_file $file_link
-            cat $temp_file > $KITTY_DIR/colors.conf
+        elif [[ "$REPLY" =~ ^[s/S]$ ]]; then
+            show_todo
             { reload_settings; reset_color; exit; }
-        fi
+        elif [[ "$REPLY" =~ ^[r/R]$ ]]; then
+            remove_todo
+            { reload_settings; reset_color; exit; }
+        fi 
     else
         echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
-        { sleep 2; banner; echo; import_files; }
+        { sleep 1; banner; echo; todo_list; }
     fi
 }
 
+add_todo () {
+    banner;
+    { printf '\n%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Add TODOs${ORANGE}:"; }
+    { printf '\n%s\n\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Ctrl+c to Stop"; }
+    sed -i '/^$/d' ${HOME}/.kitty_does.txt
+    if ! [ -s ${HOME}/.kitty_does.txt ]; then
+        read -e -p ${BLUE}"    [${RED}1${BLUE}]: ${WHITEBG}${BLACK}" todos;
+        printf "${DEFAULT_BG}" 
+        printf '\n%s' "${todos}" >> "${HOME}/.kitty_does.txt"
+    fi 
+    while true
+    do
+        banner; 
+        sed -i '/^$/d' ${HOME}/.kitty_does.txt
+        # cat -n ${HOME}/.kitty_does.txt
+        nl ${HOME}/.kitty_does.txt
+        count=$(($( wc -l < ${HOME}/.kitty_does.txt )+2))
+        read -e -p ${BLUE}"    [${RED}${count}${BLUE}]: ${WHITEBG}${BLACK}" todos;
+        printf "${DEFAULT_BG}" 
+        printf '\n%s' "${todos}" >> "${HOME}/.kitty_does.txt"
+    done 
+}
  
-update_pkitty () {
+show_todo () {
     banner; 
-    echo "    ${BLUE}[${RED}!${BLUE}] ${RED}UPDATING..."
-    echo "    ${BLUE}"
-	if [[ ! -d $HOME/pretty-kitty ]]; then
-        git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty 
-        cd $HOME/pretty-kitty 
-    else
-        echo; 
-        echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Directory Exists..."
-        cd $HOME/pretty-kitty
-        git pull
+    sed -i '/^$/d' ${HOME}/.kitty_does.txt
+    if ! [ -s ${HOME}/.kitty_does.txt ]; then
+        printf '\n%s' "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}TODO list empty";
+        exit;  
+    fi 
+    less -N ${HOME}/.kitty_does.txt
+}
+ 
+remove_todo () {
+    banner; 
+    sed -i '/^$/d' ${HOME}/.kitty_does.txt
+    if ! [ -s ${HOME}/.kitty_does.txt ]; then
+        printf '\n%s' "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}TODO list empty";
+        exit;  
+    fi 
+    cat -n ${HOME}/.kitty_does.txt
+    { echo; read -p ${BLUE}"    [${RED}Enter TODO no. to delete${BLUE}]: ${GREEN}" answer; echo; }
+    re='^[0-9]+$'
+    if [[ $answer =~ $re ]] ; then
+        sed -i -e "${answer}d" ${HOME}/.kitty_does.txt
+	else
+        echo;
 	fi
-    chmod +x * 
-    sh install 
-	{ reload_settings; reset_color; exit; }
+    remove_todo 
 }
  
 upload_imgur () {
@@ -330,6 +361,48 @@ upload_imgur () {
     fi
 exit;
 } 
+
+import_files () {
+    echo "    ${BLUE}[${RED}L${BLUE}] ${ORANGE}Local File (Enter path to file)
+    ${BLUE}[${RED}I${BLUE}] ${ORANGE}Internet File (Enter File URL)"
+    { echo; read -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}" option; echo; }
+
+    temp_file=$(mktemp /tmp/kitty_XXXXXXXXXX.conf)
+
+    if [[ "$option" =~ ^[l/L/i/I]$ ]]; then
+        if [[ "$option" =~ ^[l/L]$ ]]; then
+            { read -p ${BLUE}"    [${RED}Enter Path To Color-scheme${BLUE}]: ${GREEN}" file_path; echo; }
+            cat $file_path > $KITTY_DIR/colors.conf
+            { reload_settings; reset_color; exit; }
+        elif [[ "$option" =~ ^[i/I]$ ]]; then
+            { read -p ${BLUE}"    [${RED}Enter Color-scheme URL${BLUE}]: ${GREEN}" file_link; echo; }
+            wget -o /tmp/log -O $temp_file $file_link
+            cat $temp_file > $KITTY_DIR/colors.conf
+            { reload_settings; reset_color; exit; }
+        fi
+    else
+        echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
+        { sleep 2; banner; echo; import_files; }
+    fi
+}
+ 
+update_pkitty () {
+    banner; 
+    echo "    ${BLUE}[${RED}!${BLUE}] ${RED}UPDATING..."
+    echo "    ${BLUE}"
+	if [[ ! -d $HOME/pretty-kitty ]]; then
+        git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty 
+        cd $HOME/pretty-kitty 
+    else
+        echo; 
+        echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Directory Exists..."
+        cd $HOME/pretty-kitty
+        git pull
+	fi
+    chmod +x * 
+    sh install 
+	{ reload_settings; reset_color; exit; }
+}
  
 # fzf_apply(){} 
 # fzf_apply_light(){} 
@@ -340,22 +413,23 @@ interface() {
 until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     banner
     echo "
-    ${BLUE}[${RED}S${BLUE}] ${GREEN}Select Theme/Wallpaper
-    ${BLUE}[${RED}D${BLUE}] ${GREEN}Apply Random Dark Theme ($total_dark)
-    ${BLUE}[${RED}L${BLUE}] ${GREEN}Apply Random Light Theme ($total_light)
-    ${BLUE}[${RED}F${BLUE}] ${GREEN}Change Font ($total_fonts)
-    ${BLUE}[${RED}G${BLUE}] ${GREEN}Upload Image/s to Imgur
-    ${BLUE}[${RED}W${BLUE}] ${GREEN}Apply Random Wallpaper
+    ${BLUE}[${RED}S${BLUE}] ${GREEN}Select
+    ${BLUE}[${RED}D${BLUE}] ${GREEN}Random Dark ($total_dark)
+    ${BLUE}[${RED}L${BLUE}] ${GREEN}Random Light ($total_light)
+    ${BLUE}[${RED}W${BLUE}] ${GREEN}Random Wallpaper ($total_wall)
+    ${BLUE}[${RED}F${BLUE}] ${GREEN}Font ($total_fonts)
+    ${BLUE}[${RED}T${BLUE}] ${GREEN}TODO
+    ${BLUE}[${RED}G${BLUE}] ${GREEN}Upload Image/s
     ${BLUE}[${RED}R${BLUE}] ${GREEN}Remove Wallpaper
-    ${BLUE}[${RED}U${BLUE}] ${GREEN}Update Pretty-Kitty
-    ${BLUE}[${RED}I${BLUE}] ${GREEN}Import File/s
-    ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit Program
+    ${BLUE}[${RED}U${BLUE}] ${GREEN}Update
+    ${BLUE}[${RED}I${BLUE}] ${GREEN}Import
+    ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit
     "
 
     { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
     { banner; echo;}
 
-    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/g/G/w/W/r/R/i/I/u/U/q/Q]$ ]]; then      #validate input
+    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/t/T/g/G/w/W/r/R/i/I/u/U/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[s/S]$ ]]; then
             apply_select
         elif [[ "$REPLY" =~ ^[f/F]$ ]]; then
@@ -364,6 +438,8 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
             random_light
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
             random_dark
+        elif [[ "$REPLY" =~ ^[t/T]$ ]]; then
+            todo_list
         elif [[ "$REPLY" =~ ^[g/G]$ ]]; then
             upload_imgur
         elif [[ "$REPLY" =~ ^[w/W]$ ]]; then
