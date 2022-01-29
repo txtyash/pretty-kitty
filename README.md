@@ -41,6 +41,8 @@ Dark: `-d` flag
 
 Light: `-l` flag
 
+Upload images to imgur: `-u` flag
+
 BTW, Doesn't work on WINDOWS
 
 ### Credits :hugs:

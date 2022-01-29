@@ -250,7 +250,7 @@ update_pkitty () {
  
 upload_imgur () {
     if command -v imgur >/dev/null 2>&1; then
-        { echo; read -e -p ${BLUE}"    [${RED}Specify Path${BLUE}]: ${GREEN}" image_path; echo; }
+        { echo; read -e -p ${BLUE}"    [${RED}Specify Full Path${BLUE}]: ${GREEN}" image_path; echo; }
         { banner; echo;}
         { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Preparing to Upload ${image_path}..."${BLUE}; echo;}
         kitty +kitten icat $image_path
