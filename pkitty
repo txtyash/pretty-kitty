@@ -11,6 +11,7 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 KITTY_DIR="$HOME/.config/kitty"
 LIGHT_DIR='/usr/local/share/pretty-kitty/colors/light'
 DARK_DIR='/usr/local/share/pretty-kitty/colors/dark'
+WALL_DIR='/home/zim/github/pretty-kitty/wallpapers'
 FONTS_DIR='/usr/local/share/fonts/pretty-kitty'
 
 ## Banner
@@ -51,6 +52,9 @@ check_files () {
     elif [[ "$1" = dark ]]; then
         dark=($(ls $DARK_DIR | egrep '\.conf$'))
         echo ${#dark[@]}
+    elif [[ "$1" = walls ]]; then
+        walls=($(ls $WALL_DIR | egrep '\.png$'))
+        echo ${#walls[@]}
     elif [[ "$1" = fonts ]]; then
         fonts=($(ls $FONTS_DIR))
         echo ${#fonts[@]}
@@ -60,6 +64,7 @@ check_files () {
 
 total_light=$(check_files light)
 total_dark=$(check_files dark)
+total_wall=$(check_files walls)
 total_fonts=$(check_files fonts)
 
 ## Reload Settings
@@ -72,14 +77,22 @@ reload_settings () {
 
 ## Apply color-schemes
 apply_select () {
-    { read -n 1 -p ${BLUE}"    [D]${RED}Dark ${CYAN}or ${BLUE}[L]${RED}Light${BLUE}? ${GREEN}"; echo; }
-
-    if [[ "$REPLY" =~ ^[l/L/d/D/q/Q]$ ]]; then      #validate input
+    echo "
+    ${BLUE}[${RED}D${BLUE}] ${GREEN}Dark Theme ($total_dark)
+    ${BLUE}[${RED}L${BLUE}] ${GREEN}Light Theme ($total_light)
+    ${BLUE}[${RED}W${BLUE}] ${GREEN}Wallpapers ($total_wall)
+    "
+    { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
+     
+    if [[ "$REPLY" =~ ^[l/L/d/D/w/W/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[l/L]$ ]]; then
             select_light
             { reload_settings; reset_color; exit; }
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
             select_dark
+            { reload_settings; reset_color; exit; }
+        elif [[ "$REPLY" =~ ^[w/W]$ ]]; then
+            select_wallpaper
             { reload_settings; reset_color; exit; }
         fi 
     else
@@ -107,7 +120,7 @@ select_light () {
     if [[ (-n "$answer") && ("$answer" -le $total_dark) ]]; then
         { banner; echo;}
         scheme=${color_schemes[(( answer - 1 ))]}
-        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${scheme##*/}"
+        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}You selected: ${scheme##*/}"
         if ! cp --force "${LIGHT_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
             printf '%s\n' "Failed to apply theme!" >&2
             return 1
@@ -138,7 +151,7 @@ select_dark () {
     if [[ (-n "$answer") && ("$answer" -le $total_dark) ]]; then
         { banner; echo;}
         scheme=${color_schemes[(( answer - 1 ))]}
-        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${scheme##*/}"
+        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}You selected: ${scheme##*/}"
         if ! cp --force "${DARK_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
             printf '%s\n' "Failed to apply theme!" >&2
             return 1
@@ -171,6 +184,54 @@ random_dark () {
 	fi
     { reload_settings; reset_color; exit; }
 }
+ 
+random_wallpaper () {
+    # Read user selection
+    wallpaper=$(find $WALL_DIR -type f -name "*.png" | shuf -n 1)
+    sed -i -e "s|.*background_image.*|background_image $wallpaper|g" $KITTY_DIR/kitty.conf
+    echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Wallpaper Set To: ${wallpaper##*/}"
+    { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+    { reload_settings; reset_color; exit; }
+}
+ 
+select_wallpaper () {
+    local count=1
+
+    # List the wallpaper
+    # ls $LIGHT_DIR --color=yes | nl | less -R
+    wallpapers=($(ls $WALL_DIR | egrep '\.png$'))
+    for wallpaper in "${wallpapers[@]}"; do
+        wall_name=$(echo $wallpaper)
+        echo ${ORANGE}"    [$count] ${wall_name%.*}"
+        count=$(($count+1))
+    done
+
+    # Read user selection
+    { echo; read -p ${BLUE}"    [${RED}Select Wallpaper (1 to $total_wall)${BLUE}]: ${GREEN}" answer; echo; }
+     
+    # Apply wallpaper
+    if [[ (-n "$answer") && ("$answer" -le $total_dark) ]]; then
+        { banner; echo;}
+        selected_wallpaper=${wallpapers[(( answer - 1 ))]}
+        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}You selected: ${selected_wallpaper##*/}"
+        if ! sed -i -e "s|.*background_image.*|background_image $WALL_DIR/$selected_wallpaper|g" $KITTY_DIR/kitty.conf &>/dev/null; then
+            printf '%s\n' "Failed to apply wallpaper!" >&2
+            return 1
+        fi
+    else
+        echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
+        { sleep 1; banner; echo; select_wallpaper; }
+    fi
+    { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+    return
+}
+ 
+remove_wallpaper () {
+    # Read user selection
+    sed -i -e "s|.*background_image.*|#background_image|g" $KITTY_DIR/kitty.conf
+    { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+    { reload_settings; reset_color; exit; }
+}
 
 ## Apply fonts
 apply_fonts () {
@@ -193,8 +254,8 @@ apply_fonts () {
         actual_font_name=$(fc-list | grep -i $font_ttf | head -n 1 | cut -d':' -f2)
         { read -p ${BLUE}"    [${RED}Enter Font Size (Default is 10)${BLUE}]: ${GREEN}" font_size; echo; }
         echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Applying Fonts..."
-        sed -i -e "s/font_family .*/font_family      $actual_font_name/g" $KITTY_DIR/kitty.conf
-        sed -i -e "s/font_size .*/font_size  ${font_size:-10}/g" $KITTY_DIR/kitty.conf
+        sed -i -e "s/.*font_family.*/font_family $actual_font_name/g" $KITTY_DIR/kitty.conf
+        sed -i -e "s/.*font_size.*/font_size ${font_size:-10}/g" $KITTY_DIR/kitty.conf
         { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
         { reset_color; exit; }
     else
@@ -279,20 +340,22 @@ interface() {
 until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     banner
     echo "
-    ${BLUE}[${RED}S${BLUE}] ${GREEN}Select
-    ${BLUE}[${RED}D${BLUE}] ${GREEN}Random Dark ($total_dark)
-    ${BLUE}[${RED}L${BLUE}] ${GREEN}Random Light ($total_light)
-    ${BLUE}[${RED}F${BLUE}] ${GREEN}Fonts ($total_fonts)
+    ${BLUE}[${RED}S${BLUE}] ${GREEN}Select Theme/Wallpaper
+    ${BLUE}[${RED}D${BLUE}] ${GREEN}Apply Random Dark Theme ($total_dark)
+    ${BLUE}[${RED}L${BLUE}] ${GREEN}Apply Random Light Theme ($total_light)
+    ${BLUE}[${RED}F${BLUE}] ${GREEN}Change Font ($total_fonts)
+    ${BLUE}[${RED}G${BLUE}] ${GREEN}Upload Image/s to Imgur
+    ${BLUE}[${RED}W${BLUE}] ${GREEN}Apply Random Wallpaper
+    ${BLUE}[${RED}R${BLUE}] ${GREEN}Remove Wallpaper
     ${BLUE}[${RED}U${BLUE}] ${GREEN}Update Pretty-Kitty
-    ${BLUE}[${RED}I${BLUE}] ${GREEN}Import
-    ${BLUE}[${RED}G${BLUE}] ${GREEN}Upload to Imgur
-    ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit
+    ${BLUE}[${RED}I${BLUE}] ${GREEN}Import File/s
+    ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit Program
     "
 
     { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
     { banner; echo;}
 
-    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/i/I/u/U/g/G/q/Q]$ ]]; then      #validate input
+    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/g/G/w/W/r/R/i/I/u/U/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[s/S]$ ]]; then
             apply_select
         elif [[ "$REPLY" =~ ^[f/F]$ ]]; then
@@ -301,12 +364,16 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
             random_light
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
             random_dark
+        elif [[ "$REPLY" =~ ^[g/G]$ ]]; then
+            upload_imgur
+        elif [[ "$REPLY" =~ ^[w/W]$ ]]; then
+            random_wallpaper
+        elif [[ "$REPLY" =~ ^[r/R]$ ]]; then
+            remove_wallpaper
         elif [[ "$REPLY" =~ ^[i/I]$ ]]; then
             import_files
         elif [[ "$REPLY" =~ ^[u/U]$ ]]; then
             update_pkitty
-        elif [[ "$REPLY" =~ ^[g/G]$ ]]; then
-            upload_imgur
         fi
     else
         echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
