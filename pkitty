@@ -11,7 +11,7 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 KITTY_DIR="$HOME/.config/kitty"
 LIGHT_DIR='/usr/local/share/pretty-kitty/colors/light'
 DARK_DIR='/usr/local/share/pretty-kitty/colors/dark'
-WALL_DIR='/home/zim/github/pretty-kitty/wallpapers'
+WALL_DIR='/usr/local/share/pretty-kitty/wallpapers'
 FONTS_DIR='/usr/local/share/fonts/pretty-kitty'
 
 ## Banner
