@@ -68,17 +68,17 @@ check_prev () {
 		{ echo; echo "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed."; }
 		{ read -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; echo; }
 		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
-			install_pretty-kitty
+			install_pkitty
 		else
 			{ reset_color; exit; }
 		fi
 	else
-		{ echo; install_pretty-kitty; }
+		{ echo; install_pkitty; }
 	fi
 }
 
 ## Install pretty-kitty
-install_pretty-kitty () {
+install_pkitty () {
 	echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
 	# Delete old files
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
