@@ -111,6 +111,7 @@ install_pkitty () {
 	# Verify files 
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed."; }
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
 		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}."; echo; }
 		{ reset_color; exit 0; }
 	else
