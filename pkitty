@@ -296,13 +296,16 @@ main() {
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
 		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Creating one for you..."${BLUE}
-        # sed -i -e 's|program: .*|program: '$SHELL'|g' $DIR/kitty.conf
-	    cp $DIR/kitty.conf $KITTY_DIR
+	    cp -r /usr/local/share/pretty-kitty/kitty.conf $KITTY_DIR
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+        { reset_color; exit; }
 	fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
-		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding colors.conf import to kitty config..."
 		printf 'include ' "${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+        { reset_color; exit; }
 	fi
 	
     if [ $type = "light" ]; then
