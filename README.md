@@ -1,9 +1,9 @@
 <h2 align='center'> :unicorn: Pretty-Kitty :unicorn: </h1>
-<h3 align='center'> :jack_o_lantern: Set light/dark themes & fonts for Kitty :christmas_tree: </h1>
+<h3 align='center'> :sparkle: Set light/dark themes & fonts for Kitty :sparkle: </h1>
 
 <p align='center'>
 <img src="images/preview.png" /><br>
-<strong> :sparkle: There's 200+ themes! :sparkle: </strong>
+<strong> :jack_o_lantern: pretty-kitty is a fork of kitty-cat with added features and minor tweaks</strong>
 </p>
 
 ### Installation :rainbow:
