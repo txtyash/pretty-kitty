@@ -91,16 +91,16 @@ install_pkitty () {
 	fi
      
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
-		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
-		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Creating one for you..."${BLUE}
+		echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Creating one for you..."${BLUE}
 	    cp $DIR/kitty.conf $KITTY_DIR
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please restart kitty after install..."; echo; }
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install..."; echo; }
 	fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
 		printf "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please restart kitty after install..."; echo; }
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install..."; echo; }
 	fi
 	
 	# Copying files
