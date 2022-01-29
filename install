@@ -120,8 +120,8 @@ install_pretty-kitty () {
 
 ## Main
 main () {
-	# prerequisite
-	# check_prev
+	prerequisite
+	check_prev
     banner
 }
 

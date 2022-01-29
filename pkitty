@@ -193,10 +193,10 @@ apply_fonts () {
         actual_font_name=$(fc-list | grep -i $font_ttf | head -n 1 | cut -d':' -f2)
         { read -p ${BLUE}"    [${RED}Enter Font Size (Default is 10)${BLUE}]: ${GREEN}" font_size; echo; }
         echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Applying Fonts..."
-        sed -i -e "s/family: .*/family:      $actual_font_name/g" $KITTY_DIR/kitty.conf
-        sed -i -e "s/size: .*/size:  ${font_size:-10}/g" $KITTY_DIR/kitty.conf
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Applied a new font"; echo; }
-        { reload_settings; reset_color; exit; }
+        sed -i -e "s/font_family .*/font_family      $actual_font_name/g" $KITTY_DIR/kitty.conf
+        sed -i -e "s/font_size .*/font_size  ${font_size:-10}/g" $KITTY_DIR/kitty.conf
+        { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
+        { reset_color; exit; }
     else
         echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
         { sleep 2; banner; echo; apply_fonts; }
