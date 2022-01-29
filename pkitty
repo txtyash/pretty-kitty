@@ -248,6 +248,28 @@ update_pkitty () {
 	{ reload_settings; reset_color; exit; }
 }
  
+upload_imgur () {
+    if command -v imgur >/dev/null 2>&1; then
+        { echo; read -e -p ${BLUE}"    [${RED}Specify Path${BLUE}]: ${GREEN}" image_path; echo; }
+        { banner; echo;}
+        { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Preparing to Upload ${image_path}..."${BLUE}; echo;}
+        kitty +kitten icat $image_path
+        echo; 
+        imgur $image_path
+    else
+        { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Installing imgur script..."${BLUE}; echo; }
+        if ! sudo wget --show-progress https://raw.githubusercontent.com/tremby/imgur.sh/main/imgur.sh -O /usr/local/bin/imgur; then
+            sudo rm /usr/local/bin/imgur 
+            { echo; printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Failed to retrieve imgur script..."${BLUE}; }
+            exit; 
+        else
+            sudo chmod +x /usr/local/bin/imgur 
+            { banner; echo; upload_imgur; }
+        fi 
+    fi
+exit;
+} 
+ 
 # fzf_apply(){} 
 # fzf_apply_light(){} 
 # fzf_apply_dark(){} 
@@ -261,15 +283,16 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     ${BLUE}[${RED}D${BLUE}] ${GREEN}Random Dark ($total_dark)
     ${BLUE}[${RED}L${BLUE}] ${GREEN}Random Light ($total_light)
     ${BLUE}[${RED}F${BLUE}] ${GREEN}Fonts ($total_fonts)
-    ${BLUE}[${RED}U${BLUE}] ${GREEN}Update
+    ${BLUE}[${RED}U${BLUE}] ${GREEN}Update Pretty-Kitty
     ${BLUE}[${RED}I${BLUE}] ${GREEN}Import
+    ${BLUE}[${RED}G${BLUE}] ${GREEN}Upload to Imgur
     ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit
     "
 
     { read -n 1 -p ${BLUE}"    [${RED}Select Option${BLUE}]: ${GREEN}"; echo; }
     { banner; echo;}
 
-    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/i/I/u/U/q/Q]$ ]]; then      #validate input
+    if [[ "$REPLY" =~ ^[s/S/f/F/l/L/d/D/i/I/u/U/g/G/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[s/S]$ ]]; then
             apply_select
         elif [[ "$REPLY" =~ ^[f/F]$ ]]; then
@@ -282,6 +305,8 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
             import_files
         elif [[ "$REPLY" =~ ^[u/U]$ ]]; then
             update_pkitty
+        elif [[ "$REPLY" =~ ^[g/G]$ ]]; then
+            upload_imgur
         fi
     else
         echo -n "    ${BLUE}[${RED}!${BLUE}] ${RED}Invalid Option, Try Again."
@@ -301,19 +326,21 @@ OPTIONS:
 	-h, --help 		Show this help message
 	-d, --dark 		Only select dark themes
 	-l, --light 	Only select light themes
+    -u, --upload 	Upload to imgur
 EOF
 }
 
 main() {
 	local opts type theme
-	opts="$(getopt --options hdl --longoptions help,dark,light --name "${0##*/}" -- "${@}")"
+	opts="$(getopt --options hdlu --longoptions help,dark,light,upload --name "${0##*/}" -- "${@}")"
 	
 	eval set -- "${opts}"
 	while true; do
 		case "${1}" in
 			-h | --help ) 	show_help; exit 0;;
-			-d | --dark ) 	type="dark";;
-			-l | --light ) 	type="light";;
+			-d | --dark ) 	random_dark; exit 0;;
+			-l | --light ) 	random_light; exit 0;;
+			-u | --upload ) upload_imgur; exit 0;;
 			-- ) 			shift; break;;
 			* ) 			break;;
 		esac
@@ -334,26 +361,8 @@ main() {
         { echo "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Please Restart Kitty."; echo; }
         { reset_color; exit; }
 	fi
-	
-    if [ $type = "light" ]; then
-        banner 
-        random_scheme=$(find $LIGHT_DIR -type f -name "*.conf" | shuf -n 1)
-        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
-        if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-            printf '%s\n' "Failed to apply theme!" >&2
-            return 1
-        fi
-    elif [ $type = "dark" ]; then
-        banner 
-        random_scheme=$(find $DARK_DIR -type f -name "*.conf" | shuf -n 1)
-        echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Theme Set To: ${random_scheme##*/}"
-        if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-            printf '%s\n' "Failed to apply theme!" >&2
-            return 1
-        fi
-    else
-        interface
-    fi 
+    
+    interface
 	
 	return 0
 }
