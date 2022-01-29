@@ -262,6 +262,7 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     ${BLUE}[${RED}L${BLUE}] ${GREEN}Random Light ($total_light)
     ${BLUE}[${RED}F${BLUE}] ${GREEN}Fonts ($total_fonts)
     ${BLUE}[${RED}U${BLUE}] ${GREEN}Update
+    ${BLUE}[${RED}I${BLUE}] ${GREEN}Import
     ${BLUE}[${RED}Q${BLUE}] ${GREEN}Quit
     "
 
