@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+## Author  : Aditya Shakya
+## Twitter : @adi1090x
+## Github  : @adi1090x
+## Reddit  : @adi1090x
+
+## Kitty-cat installer script
+
+## ANSI Colors (FG & BG)
+RED="$(printf '\033[31m')"  GREEN="$(printf '\033[32m')"  ORANGE="$(printf '\033[33m')"  BLUE="$(printf '\033[34m')"
+MAGENTA="$(printf '\033[35m')"  CYAN="$(printf '\033[36m')"  WHITE="$(printf '\033[37m')" BLACK="$(printf '\033[30m')"
+REDBG="$(printf '\033[41m')"  GREENBG="$(printf '\033[42m')"  ORANGEBG="$(printf '\033[43m')"  BLUEBG="$(printf '\033[44m')"
+MAGENTABG="$(printf '\033[45m')"  CYANBG="$(printf '\033[46m')"  WHITEBG="$(printf '\033[47m')" BLACKBG="$(printf '\033[40m')"
+DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
+
+## Directories
+DIR="$(pwd)"
+KITTY_DIR="$HOME/.config/kitty"
+
+## Banner
+banner () {
+    clear
+    echo "
+    ${BLUE}/\___/\ 			          
+    ${BLUE}\ -.- / ${RED} ┃ ┃┛━┏┛━┏┛┃ ┃ ${GREEN} ┏━┛┏━┃━┏┛  
+    ${BLUE}'-.^.-' ${RED} ┏┛ ┃ ┃  ┃ ━┏┛ ${GREEN} ┃  ┏━┃ ┃   
+    ${BLUE}  /'\   ${RED} ┛ ┛┛ ┛  ┛  ┛  ${GREEN} ━━┛┛ ┛ ┛   
+
+    ${BLUE}[${RED}*${BLUE}] ${ORANGE}By- Aditya Shakya ${RED}//${ORANGE} adi1090x"
+}
+
+## Script Termination
+exit_on_signal_SIGINT () {
+    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script interrupted." 2>&1; echo; reset_color; }
+    exit 0
+}
+
+exit_on_signal_SIGTERM () {
+    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script terminated." 2>&1; echo; reset_color; }
+    exit 0
+}
+
+trap exit_on_signal_SIGINT SIGINT
+trap exit_on_signal_SIGTERM SIGTERM
+
+## Reset terminal colors
+reset_color() {
+	tput sgr0   # reset attributes
+	tput op     # reset color
+    return
+}
+
+## Prerequisite
+prerequisite() {
+    dependencies=(kitty sed wget)
+    for dependency in "${dependencies[@]}"; do
+        type -p "$dependency" &>/dev/null || {
+			banner
+            { echo; echo "    ${BLUE}[${RED}!${BLUE}] ${RED}ERROR: Could not find ${MAGENTA}'${dependency}'${RED}, is it installed?" >&2; echo; }
+            { reset_color; exit 1; }
+        }
+    done
+}
+
+## Check for previous installation
+check_prev () {
+	banner
+	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+		{ echo; echo "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed."; }
+		{ read -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wanna reinstall it? (y/n): ${GREEN}"; echo; }
+		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
+			install_kcat
+		else
+			{ reset_color; exit; }
+		fi
+	else
+		{ echo; install_kcat; }
+	fi
+}
+
+## Install pretty-kitty
+install_kcat () {
+	echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
+	# Delete old files
+	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation..."${BLUE}
+		{ printf "    "; sudo rm -r /usr/local/bin/pretty-kitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; echo; }
+	fi
+	# Kitty config dir
+	if [[ ! -d $KITTY_DIR ]]; then
+		mkdir $KITTY_DIR
+	fi
+	# User Config
+	if [[ -f $KITTY_DIR/kitty.conf ]]; then
+		mv $KITTY_DIR/kitty.conf{,.user}
+	fi
+	# Copy new config
+	cp $DIR/kitty.conf $KITTY_DIR
+	# Copying files
+	{ echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory..."${BLUE}; }
+	{ printf "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
+	{ sudo cp -r $DIR/colors /usr/local/share/pretty-kitty/; sudo cp -r $DIR/fonts/* /usr/local/share/fonts/pretty-kitty/; sudo cp -r $DIR/kcat /usr/local/share/pretty-kitty/; }
+	{ sudo chmod +x /usr/local/share/pretty-kitty/kcat; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/kcat /usr/local/bin/pretty-kitty; }
+
+	# Verify files 
+	if [[ (-L /usr/local/bin/pretty-kitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed."; }
+		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pretty-kitty${GREEN}."; echo; }
+		{ reset_color; exit 0; }
+	else
+		{ echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; echo; reset_color; exit 1; }
+	fi
+}
+
+## Main
+main () {
+	prerequisite
+	check_prev
+}
+
+main
