@@ -346,17 +346,18 @@ remove_todo () {
  
 upload_imgur () {
     if command -v imgur >/dev/null 2>&1; then
-        { echo; read -e -p ${BLUE}"    [${RED}Specify Full Path${BLUE}]: ${GREEN}" image_path; echo; }
+        { echo; read -e -p ${BLUE}"    [${BLUE}Specify Path to Image${CYAN}]: ${GREEN}" image_path; echo; }
         { banner; echo;}
-        { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Preparing to Upload ${image_path}..."${BLUE}; echo;}
+        { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Preparing to upload ${GREEN}${image_path}..."${BLUE}; echo;}
+        image_path="${image_path/#\~/$HOME}" 
         kitty +kitten icat $image_path
         echo; 
         imgur $image_path
     else
-        { printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Installing imgur script..."${BLUE}; echo; }
+        { printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${ORANGE}Installing imgur script..."${BLUE}; echo; }
         if ! sudo wget --show-progress https://raw.githubusercontent.com/tremby/imgur.sh/main/imgur.sh -O /usr/local/bin/imgur; then
             sudo rm /usr/local/bin/imgur 
-            { echo; printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Failed to retrieve imgur script..."${BLUE}; }
+            { echo; printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Failed to retrieve imgur script..."${BLUE}; }
             exit; 
         else
             sudo chmod +x /usr/local/bin/imgur 
