@@ -9,10 +9,10 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 
 ## Directories
 KITTY_DIR="$HOME/.config/kitty"
-LIGHT_DIR='/usr/local/share/pretty-kitty/colors/light'
-DARK_DIR='/usr/local/share/pretty-kitty/colors/dark'
-WALL_DIR='/usr/local/share/pretty-kitty/wallpapers'
-FONTS_DIR='/usr/local/share/fonts/pretty-kitty'
+LIGHT_DIR="/usr/local/share/pretty-kitty/colors/light"
+DARK_DIR="/usr/local/share/pretty-kitty/colors/dark"
+WALL_DIR="/usr/local/share/pretty-kitty/wallpapers"
+FONTS_DIR="/usr/local/share/fonts/pretty-kitty"
 
 ## Banner
 banner () {
@@ -165,9 +165,6 @@ select_dark () {
  
 select_wallpaper () {
     local count=1
-
-    # List the wallpaper
-    # ls $LIGHT_DIR --color=yes | nl | less -R
     wallpapers=($(ls $WALL_DIR | egrep '\.png$'))
     for wallpaper in "${wallpapers[@]}"; do
         wall_name=$(echo $wallpaper)
@@ -182,6 +179,10 @@ select_wallpaper () {
     if [[ (-n "$answer") && ("$answer" -le $total_dark) ]]; then
         { banner; echo;}
         selected_wallpaper=${wallpapers[(( answer - 1 ))]}
+	    if ! grep --quiet 'background_image' "${KITTY_DIR}/kitty.conf"; then
+	    	printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Adding background_image option to kitty config..."
+	    	printf '%s\n' "#background_image" >> "${KITTY_DIR}/kitty.conf"
+	    fi
         echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}You selected: ${selected_wallpaper##*/}"
         if ! sed -i -e "s|.*background_image.*|background_image $WALL_DIR/$selected_wallpaper|g" $KITTY_DIR/kitty.conf &>/dev/null; then
             printf '%s\n' "Failed to apply wallpaper!" >&2
@@ -218,7 +219,10 @@ random_dark () {
 }
  
 random_wallpaper () {
-    # Read user selection
+	if ! grep --quiet 'background_image' "${KITTY_DIR}/kitty.conf"; then
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Adding background_image option to kitty config..."
+		printf "#background_image" >> "${KITTY_DIR}/kitty.conf"
+	fi
     wallpaper=$(find $WALL_DIR -type f -name "*.png" | shuf -n 1)
     sed -i -e "s|.*background_image.*|background_image $wallpaper|g" $KITTY_DIR/kitty.conf
     echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Wallpaper Set To: ${wallpaper##*/}"
@@ -234,6 +238,16 @@ remove_wallpaper () {
 }
 
 apply_fonts () {
+    # Check if option is present in config
+    if egrep -qwi 'font_family' "${KITTY_DIR}/kitty.conf" && egrep -qwi 'font_size' "${KITTY_DIR}/kitty.conf"; then
+        echo -n;
+    else 
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding font options to kitty config..."
+		printf '\n%s' "font_family" >> "${KITTY_DIR}/kitty.conf"
+		printf '\n%s' "font_size" >> "${KITTY_DIR}/kitty.conf"
+        sleep 1; 
+	fi
+
     local count=1
 
     # List fonts
@@ -246,7 +260,7 @@ apply_fonts () {
 
     # Read user selection
     { echo; read -p ${BLUE}"    [${RED}Select font (1 to $total_fonts)${BLUE}]: ${GREEN}" answer; echo; }
-
+    
     # Apply fonts
     if [[ (-n "$answer") && ("$answer" -le $total_fonts) ]]; then
         font_ttf=${fonts_list[(( answer - 1 ))]}
