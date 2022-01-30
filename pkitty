@@ -114,7 +114,7 @@ select_light () {
     done
 
     # Read user selection
-    { echo; read -p ${BLUE}"    [${RED}Select Color Scheme (1 to $total_dark)${BLUE}]: ${GREEN}" answer; echo; }
+    { echo; read -p ${BLUE}"    [${RED}Select Color Scheme (1 to $total_light)${BLUE}]: ${GREEN}" answer; echo; }
 
     # Apply color-scheme
     if [[ (-n "$answer") && ("$answer" -le $total_dark) ]]; then
