@@ -330,10 +330,14 @@ remove_todo () {
         exit;  
     fi 
     cat -n ${HOME}/.kitty_does.txt
-    { echo; read -p ${BLUE}"    [${RED}Enter TODO no. to delete${BLUE}]: ${GREEN}" answer; echo; }
+        printf '\n%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}q/Q/quit/Quit to exit";
+    { echo; read -p ${BLUE}"    [${ORANGE}Enter a number${BLUE}]: ${GREEN}" answer; echo; }
     re='^[0-9]+$'
     if [[ $answer =~ $re ]] ; then
         sed -i -e "${answer}d" ${HOME}/.kitty_does.txt
+    elif [[ $answer = "q" ]] || [[ $answer = "Q" ]] || [[ $answer = "quit" ]] || [[ $answer = "Quit" ]] ; then
+        printf '\n%s' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}TODO list saved";
+        exit;
 	else
         echo;
 	fi
