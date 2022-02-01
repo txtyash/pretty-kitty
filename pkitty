@@ -86,10 +86,18 @@ apply_select () {
      
     if [[ "$REPLY" =~ ^[l/L/d/D/w/W/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[l/L]$ ]]; then
-            select_light
+            if command -v fzf >/dev/null 2>&1; then
+                select_light_fzf
+            else
+                select_light
+            fi 
             { reload_settings; reset_color; exit; }
         elif [[ "$REPLY" =~ ^[d/D]$ ]]; then
-            select_dark
+            if command -v fzf >/dev/null 2>&1; then
+                select_dark_fzf
+            else
+                select_dark
+            fi 
             { reload_settings; reset_color; exit; }
         elif [[ "$REPLY" =~ ^[w/W]$ ]]; then
             select_wallpaper
@@ -162,6 +170,24 @@ select_dark () {
     fi
     return
 }
+ 
+select_light_fzf () {
+    cd $LIGHT_DIR
+    scheme=$( fzf ) 
+    if ! cp --force "${LIGHT_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
+        printf '%s\n' "Failed to apply theme!" >&2
+        return 1
+    fi
+} 
+ 
+select_dark_fzf () {
+    cd $DARK_DIR
+    scheme=$( fzf ) 
+    if ! cp --force "${DARK_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
+        printf '%s\n' "Failed to apply theme!" >&2
+        return 1
+    fi
+} 
  
 select_wallpaper () {
     local count=1
