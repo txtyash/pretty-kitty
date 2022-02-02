@@ -286,12 +286,12 @@ interface() {
 until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     banner
     printf '\n%s' "
-    ${BLACKBG}${BOLD}${WHITE} J ${DEFAULT_BG}${NORMAL}${BLUE} Random Dark Theme
-    ${WHITEBG}${BOLD}${BLACK} K ${DEFAULT_BG}${NORMAL}${BLUE} Random Light Theme
     ${BLACKBG}${BOLD}${WHITE} D ${DEFAULT_BG}${NORMAL}${BLUE} Select Dark Theme(${total_dark})
     ${WHITEBG}${BOLD}${BLACK} L ${DEFAULT_BG}${NORMAL}${BLUE} Select Light Theme(${total_light})
     ${BLACKBG}${BOLD}${WHITE} F ${DEFAULT_BG}${NORMAL}${BLUE} Font Family(${total_fonts})
     ${WHITEBG}${BOLD}${BLACK} S ${DEFAULT_BG}${NORMAL}${BLUE} Font Size
+    ${BLACKBG}${BOLD}${WHITE} J ${DEFAULT_BG}${NORMAL}${BLUE} Random Dark Theme
+    ${WHITEBG}${BOLD}${BLACK} K ${DEFAULT_BG}${NORMAL}${BLUE} Random Light Theme
     ${BLACKBG}${BOLD}${WHITE} W ${DEFAULT_BG}${NORMAL}${BLUE} Wallpaper(${total_wall})
     ${WHITEBG}${BOLD}${BLACK} G ${DEFAULT_BG}${NORMAL}${BLUE} Upload Image/s
     ${BLACKBG}${BOLD}${WHITE} U ${DEFAULT_BG}${NORMAL}${BLUE} Update pkitty
@@ -299,21 +299,21 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
     ${BLACKBG}${BOLD}${WHITE} Q ${DEFAULT_BG}${NORMAL}${BLUE} Quit
     "
 
-    { printf "\n"; read -r -n 1 -p "${CYAN}    [${RED}Select Option${CYAN}]: ${GREEN}"; printf "\n"; banner; }
+    { printf "\n"; read -r -n 1 -p "${BOLD}    ${BLACKBG}${CYAN} Select Option${GREEN}: ${DEFAULT_BG}${NORMAL}"; printf "\n"; banner; }
 
     if [[ "$REPLY" =~ ^[j/J/k/K/d/D/l/L/f/F/s/S/w/W/g/G/u/U/u/U/i/I/q/Q]$ ]]; then      #validate input
         if [[ "$REPLY" =~ ^[d/D]$ ]]; then
             select_dark
         elif [[ "$REPLY" =~ ^[l/L]$ ]]; then
             select_light
-        elif [[ "$REPLY" =~ ^[j/J]$ ]]; then
-            random_dark
-        elif [[ "$REPLY" =~ ^[k/K]$ ]]; then
-            random_light
         elif [[ "$REPLY" =~ ^[f/F]$ ]]; then
             apply_font_family
         elif [[ "$REPLY" =~ ^[s/S]$ ]]; then
             apply_font_size
+        elif [[ "$REPLY" =~ ^[j/J]$ ]]; then
+            random_dark
+        elif [[ "$REPLY" =~ ^[k/K]$ ]]; then
+            random_light
         elif [[ "$REPLY" =~ ^[w/W]$ ]]; then
             kitty_wall
         elif [[ "$REPLY" =~ ^[g/G]$ ]]; then
