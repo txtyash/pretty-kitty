@@ -6,6 +6,11 @@
 <strong> :jack_o_lantern: pretty-kitty is a fork of kitty-cat with added features and minor tweaks</strong>
 </p>
 
+### Dependencies :couple:
+```
+kitty fzf git sed grep egrep find wget
+```
+
 ### Installation :rainbow:
 
 ```
@@ -17,7 +22,7 @@ cd $HOME/pretty-kitty
 ```
 Make the script executable:
 ```
-chmod +x *
+chmod +x ./*
 ```
 Run the installer:
 ```

@@ -1,2 +1,0 @@
-font_size
-font_family
