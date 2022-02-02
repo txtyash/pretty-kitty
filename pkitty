@@ -25,12 +25,12 @@ banner () {
 }
 
 exit_on_signal_SIGINT () {
-    { printf "\n%s\n" "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
+    { printf "\n%s\n" "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
 exit_on_signal_SIGTERM () {
-    { printf "\n%s\n" "    ${WHITEBG}${BOLD}${RED} * ${DEFAULT_BG}${NORMAL} ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
+    { printf "\n%s\n" "    ${BOLD}${MAGENTA} ⚫ ${DEFAULT_BG}${NORMAL} ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
@@ -70,7 +70,7 @@ total_fonts=$(check_files fonts)
 
 ## Reload Settings
 reload_settings () {
-    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✓ ${DEFAULT_BG}${NORMAL} ${BLUE}Reloading Settings...";
+    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✔️ ${DEFAULT_BG}${NORMAL} ${BLUE}Reloading Settings...";
     kitty @ set-colors --all "$KITTY_DIR/colors.conf" > /dev/null
     return
 }
@@ -81,19 +81,19 @@ restart_kitty () {
     return
 }
 invalid_option () {
-    printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Invalid Option, Try Again"
+    printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Invalid Option, Try Again"
     return
 }
 
 select_light () {
     if ! cd "$LIGHT_DIR"; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${LIGHT_DIR} doesn't exist${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${LIGHT_DIR} doesn't exist${BLUE}";
         exit 1 
     fi 
     scheme=$( fzf ) 
     printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ♥ ${DEFAULT_BG}${NORMAL} ${BLUE}You selected: ${scheme##*/}"
     if ! cp --force "${LIGHT_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
         return 1
     fi
 	{ reload_settings; reset_color; exit; }
@@ -101,13 +101,13 @@ select_light () {
  
 select_dark () {
     if ! cd "$DARK_DIR"; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${DARK_DIR} doesn't exist${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${DARK_DIR} doesn't exist${BLUE}";
         exit 1 
     fi 
     scheme=$( fzf ) 
     printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ♥ ${DEFAULT_BG}${NORMAL} ${BLUE}You selected: ${scheme##*/}"
     if ! cp --force "${DARK_DIR}/${scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
         return 1
     fi
 	{ reload_settings; reset_color; exit; }
@@ -115,12 +115,13 @@ select_dark () {
  
 apply_font_family () {
     if ! grep -Ewq 'font_family' "${KITTY_DIR}/kitty.conf"; then
-		printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✚ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding font_family option to config..."
+        banner 
+		printf '%s\n' "    ${BOLD}${ORANGE} ⬛ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding font_family option to config..."
 		printf '\n%s' "font_family" >> "${KITTY_DIR}/kitty.conf"
         sleep 1; 
 	fi
     if ! cd "$FONTS_DIR"; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${FONTS_DIR} doesn't exist${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${FONTS_DIR} doesn't exist${BLUE}";
         exit 1 
     fi 
     font_name=$( fzf )
@@ -131,7 +132,8 @@ apply_font_family () {
  
 apply_font_size () {
     if ! grep -Ewq 'font_size' "${KITTY_DIR}/kitty.conf"; then
-		printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✚ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding font_size option to config..."
+        banner 
+		printf '%s\n' "    ${BOLD}${CYAN} ⬛ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding font_size option to config..."
 		printf '\n%s' "font_size" >> "${KITTY_DIR}/kitty.conf"
         sleep 1; 
 	fi
@@ -143,23 +145,24 @@ apply_font_size () {
  
 select_wall () {
     if ! cd "$WALL_DIR"; then
-        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${WALL_DIR} doesn't exist${BLUE}";
+        printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${WALL_DIR} doesn't exist${BLUE}";
         exit 1 
     fi 
     wallpaper=$( fzf ) 
 	if ! grep --quiet 'background_image' "${KITTY_DIR}/kitty.conf"; then
-		printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✚ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding background_image option to kitty config..."
+        banner
+		printf '%s\n' "    ${BOLD}${CYAN} ⬛ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding background_image option to kitty config..."
 		printf '%s\n' "#background_image" >> "${KITTY_DIR}/kitty.conf"
 	fi
     sed -ie "s|.*background_image.*|background_image $wallpaper|g" "$KITTY_DIR/kitty.conf"
-    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✓ ${DEFAULT_BG}${NORMAL} ${BLUE}Wallpaper Set To: ${wallpaper##*/}"
+    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✔️ ${DEFAULT_BG}${NORMAL} ${BLUE}Wallpaper Set To: ${wallpaper##*/}"
 }
  
 random_light () {
     random_scheme="$(find "$LIGHT_DIR" -type f -name "*.conf" | shuf -n 1)"
-    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✓ ${DEFAULT_BG}${NORMAL} ${BLUE}Theme Set To: ${random_scheme##*/}"
+    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✔️ ${DEFAULT_BG}${NORMAL} ${BLUE}Theme Set To: ${random_scheme##*/}"
 	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-        printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme!" >&2
+        printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme!" >&2
 		return 1
 	fi
     { reload_settings; reset_color; exit; }
@@ -167,9 +170,9 @@ random_light () {
  
 random_dark () {
     random_scheme="$(find "$DARK_DIR" -type f -name "*.conf" | shuf -n 1)"
-    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✓ ${DEFAULT_BG}${NORMAL} ${BLUE}Theme Set To: ${random_scheme##*/}"
+    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✔️ ${DEFAULT_BG}${NORMAL} ${BLUE}Theme Set To: ${random_scheme##*/}"
 	if ! cp --force "${random_scheme}" "${KITTY_DIR}/colors.conf" &>/dev/null; then
-        printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme!" >&2
+        printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to apply theme!" >&2
 		return 1
 	fi
     { reload_settings; reset_color; exit; }
@@ -177,12 +180,13 @@ random_dark () {
  
 random_wallpaper () {
 	if ! grep --quiet 'background_image' "${KITTY_DIR}/kitty.conf"; then
-		printf '%s\n' "    ${WHITEBG}${BOLD}${RED} ✚ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding background_image option to kitty config..."
+        banner 
+		printf '%s\n' "    ${BOLD}${CYAN} ⬛ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding background_image option to kitty config..."
 		printf "#background_image" >> "${KITTY_DIR}/kitty.conf"
 	fi
     wallpaper="$(find "$WALL_DIR" -type f -name "*.png" | shuf -n 1)"
     sed -ie "s|.*background_image.*|background_image $wallpaper|g" "$KITTY_DIR/kitty.conf"
-    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✓ ${DEFAULT_BG}${NORMAL} ${BLUE}Wallpaper Set To: ${wallpaper##*/}"
+    printf '\n%s' "    ${BLACKBG}${BOLD}${GREEN} ✔️ ${DEFAULT_BG}${NORMAL} ${BLUE}Wallpaper Set To: ${wallpaper##*/}"
     { restart_kitty; reload_settings; reset_color; exit; }
 }
  
@@ -217,7 +221,7 @@ upload_imgur () {
     if command -v imgur >/dev/null 2>&1; then
         read -r -e -p "    ${BLACKBG}${BOLD}${WHITE} Specify Path to Image ${WHITEBG}${RED} ► ${DEFAULT_BG}${NORMAL} " image_path;
         banner;
-        printf '%s\n\n' "    ${WHITEBG}${BOLD}${RED} * ${DEFAULT_BG}${NORMAL} ${BLUE}Preparing to upload ${GREEN}${image_path}...${BLUE}";
+        printf '%s\n\n' "    ${BOLD}${MAGENTA} ⚫ ${DEFAULT_BG}${NORMAL} ${BLUE}Preparing to upload ${GREEN}${image_path}...${BLUE}";
         image_path="${image_path/#\~/$HOME}" 
         kitty +kitten icat "$image_path"
         imgur "$image_path"
@@ -225,7 +229,7 @@ upload_imgur () {
         printf '%s\n' "    ${WHITEBG}${BOLD}${RED} !${BLUE}] ${BLUE}Installing imgur script...${BLUE}";
         if ! sudo wget --show-progress https://raw.githubusercontent.com/tremby/imgur.sh/main/imgur.sh -O /usr/local/bin/imgur; then
             sudo rm /usr/local/bin/imgur 
-            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to retrieve imgur script...${BLUE}";
+            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}Failed to retrieve imgur script...${BLUE}";
             exit; 
         else
             sudo chmod +x /usr/local/bin/imgur 
@@ -238,7 +242,7 @@ exit;
 import_files () {
     printf '\n%s\n' "    ${WHITEBG}${BOLD}${BLACK} L ${DEFAULT_BG}${NORMAL} ${BLUE}Local File (Enter path to file)
     ${BLACKBG}${BOLD}${WHITE} I ${DEFAULT_BG}${NORMAL} ${BLUE}Internet File (Enter File URL)"
-    { printf "%s\n"; read -r -n 1 -p "    ${BLACKBG}${BOLD}${WHITE} Select Option ${WHITEBG}${RED} ► ${DEFAULT_BG}${NORMAL}" option; printf "\n"; }
+    { printf "\n"; read -r -n 1 -p "    ${BLACKBG}${BOLD}${WHITE} Select Option ${WHITEBG}${RED} ► ${DEFAULT_BG}${NORMAL}" option; printf "\n"; }
 
     temp_file=$(mktemp /tmp/kitty_XXXXXXXXXX.conf)
 
@@ -266,13 +270,13 @@ update_pkitty () {
 	if [[ ! -d $HOME/pretty-kitty ]]; then
         git clone https://github.com/zim0369/pretty-kitty "$HOME/pretty-kitty" 
         if ! cd "$HOME/pretty-kitty"; then
-            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${HOME}/pretty-kitty doesn't exist${BLUE}";
+            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${HOME}/pretty-kitty doesn't exist${BLUE}";
             exit 1 
         fi 
     else
         printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ! ${DEFAULT_BG}${NORMAL} ${BLUE}Directory Exists..."
         if ! cd "$HOME/pretty-kitty"; then
-            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ✗ ${DEFAULT_BG}${NORMAL} ${BLUE}${HOME}/pretty-kitty doesn't exist${BLUE}";
+            printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} ❌ ${DEFAULT_BG}${NORMAL} ${BLUE}${HOME}/pretty-kitty doesn't exist${BLUE}";
             exit 1 
         fi 
         git pull
@@ -328,7 +332,7 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
         sleep 2
     fi
 done
-{ printf '\n%s\n' "    ${WHITEBG}${BOLD}${RED} * ${DEFAULT_BG}${NORMAL} ${BLUE}Bye Bye, Have A Nice Day!"; reload_settings; reset_color; exit 0; }
+{ printf '\n%s\n' "    ${BOLD}${MAGENTA} ⚫ ${DEFAULT_BG}${NORMAL} ${BLUE}Bye Bye, Have A Nice Day!"; reload_settings; reset_color; exit 0; }
 } 
 
 show_help() {
@@ -363,14 +367,15 @@ main() {
 	done
      
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
-		printf '\n%s' "    ${WHITEBG}${BOLD}${RED} * ${DEFAULT_BG}${NORMAL} ${BLUE}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'${BLUE}";
-		printf '\n%s' "    ${WHITEBG}${BOLD}${RED} * ${DEFAULT_BG}${NORMAL} ${BLUE}Creating one for you...${BLUE}";
+		printf '\n%s' "    ${BOLD}${MAGENTA} ⚫ ${DEFAULT_BG}${NORMAL} ${BLUE}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'${BLUE}";
+		printf '\n%s' "    ${BOLD}${MAGENTA} ⚫ ${DEFAULT_BG}${NORMAL} ${BLUE}Creating one for you...${BLUE}";
 	    cp -r /usr/local/share/pretty-kitty/kitty.conf "$KITTY_DIR"
         { restart_kitty; reset_color; exit; }
 	fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
-		printf '\n%s' "    ${WHITEBG}${BOLD}${RED} ✚ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding colors.conf import to kitty config..."
+        banner
+		printf '\n%s' "    ${BOLD}${CYAN} ⬛ ${DEFAULT_BG}${NORMAL} ${BLUE}Adding colors.conf import to kitty config..."
 		printf '\n%s' "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
         { restart_kitty; reset_color; exit; }
 	fi
