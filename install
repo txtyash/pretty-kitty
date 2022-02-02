@@ -66,7 +66,7 @@ check_prev () {
 	banner
 	if [[ (-L /usr/local/bin/pkitty) || (-f /usr/local/bin/pkitty) ]]; then
 		printf '\n%s\n' "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed.";
-		{ read -r -p -n 1 "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; printf "\n"; }
+		{ read -r -n 1 -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; printf "\n"; }
 		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
 			install_pkitty
 		else
