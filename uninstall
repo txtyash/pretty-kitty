@@ -16,7 +16,7 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 ## Banner
 banner () {
     clear
-    echo "
+    printf '\n%s' "
     ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
     ${CYAN}██▓▒­░⡷⠂${RED} 𝓟𝓻𝓮𝓽𝓽𝔂 𝓚𝓲𝓽𝓽𝔂 ${BLUE}🐈 ${CYAN}⠐⢾░▒▓██ 
     ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
@@ -24,13 +24,14 @@ banner () {
 }
 
 ## Script Termination
+
 exit_on_signal_SIGINT () {
-    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script interrupted." 2>&1; echo; reset_color; }
+    { printf "\n\n%s\n" "    ${CYAN}[${RED}✗${CYAN}] ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
 exit_on_signal_SIGTERM () {
-    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script terminated." 2>&1; echo; reset_color; }
+    { printf "\n\n%s\n" "    ${CYAN}[${RED}*${CYAN}] ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
@@ -48,18 +49,18 @@ reset_color() {
 uninstall_tstyle () {
 	banner
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
-		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Uninstalling pretty-kitty..."; echo; }
-		{ echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Removing files from '/usr/local/share' dir."${BLUE}; }
-		{ printf "    "; sudo rm -r /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty /usr/local/bin/pkitty; sudo fc-cache; }
+		printf '\n%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Uninstalling pretty-kitty...";
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Removing files from '/usr/local/share' dir.${BLUE}";
+		{ printf '%s\n' "    "; sudo rm -r /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty /usr/local/bin/pkitty; sudo fc-cache; }
 		# Verify files
 		if [[ (! -L /usr/local/bin/pkitty) && (! -d /usr/local/share/pretty-kitty) ]]; then
-			{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Uninstalled Successfully."; echo; }
+			printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Uninstalled Successfully.";
 			{ reset_color; exit 0; }
 		else
-			{ echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; echo; reset_color; exit 1; }
+			printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; reset_color; exit 1;
 		fi
 	else
-		{ echo; echo "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is not installed."; echo; }
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is not installed.";
 		{ reset_color; exit 0; }
 	fi
 }

@@ -21,7 +21,7 @@ KITTY_DIR="$HOME/.config/kitty"
 ## Banner
 banner () {
     clear
-    echo "
+    printf '\n%s' "
     ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
     ${CYAN}██▓▒­░⡷⠂${RED} 𝓟𝓻𝓮𝓽𝓽𝔂 𝓚𝓲𝓽𝓽𝔂 ${BLUE}🐈 ${CYAN}⠐⢾░▒▓██ 
     ${ORANGE}☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴☴
@@ -30,12 +30,12 @@ banner () {
 
 ## Script Termination
 exit_on_signal_SIGINT () {
-    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script interrupted." 2>&1; echo; reset_color; }
+    { printf "\n\n%s\n" "    ${CYAN}[${RED}✗${CYAN}] ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
 exit_on_signal_SIGTERM () {
-    { printf "\n\n%s\n" "    ${BLUE}[${RED}*${BLUE}] ${RED}Script terminated." 2>&1; echo; reset_color; }
+    { printf "\n\n%s\n" "    ${CYAN}[${RED}*${CYAN}] ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
@@ -55,7 +55,7 @@ prerequisite() {
     for dependency in "${dependencies[@]}"; do
         type -p "$dependency" &>/dev/null || {
 			banner
-            { echo; echo "    ${BLUE}[${RED}!${BLUE}] ${RED}ERROR: Could not find ${MAGENTA}'${dependency}'${RED}, is it installed?" >&2; echo; }
+            printf '\n%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}ERROR: Could not find ${MAGENTA}'${dependency}'${RED}, is it installed?" >&2;
             { reset_color; exit 1; }
         }
     done
@@ -65,57 +65,57 @@ prerequisite() {
 check_prev () {
 	banner
 	if [[ (-L /usr/local/bin/pkitty) || (-f /usr/local/bin/pkitty) ]]; then
-		{ echo; echo "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed."; }
-		{ read -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; echo; }
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is alread -ry installed.";
+		{ read -r -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; printf "\n"; }
 		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
 			install_pkitty
 		else
 			{ reset_color; exit; }
 		fi
 	else
-		{ echo; install_pkitty; }
+		{ printf "\n"; install_pkitty; }
 	fi
 }
 
 ## Install pretty-kitty
 install_pkitty () {
-	echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
+	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
 	# Delete old files
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
-		echo "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation..."${BLUE}
-		{ printf "    "; sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; echo; }
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation...${BLUE}"
+        { printf '%s\n' "    "; sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; }
 	fi
 	# pretty-kitty config dir
 	if [[ ! -d $KITTY_DIR ]]; then
-		mkdir $KITTY_DIR
+		mkdir "$KITTY_DIR"
 	fi
      
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
-		echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'"${BLUE}
-		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Creating one for you..."${BLUE}
-	    cp $DIR/kitty.conf $KITTY_DIR
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install..."; echo; }
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'${BLUE}"
+		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Creating one for you...${BLUE}"
+	    cp "$DIR/kitty.conf" "$KITTY_DIR"
+        printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
 	fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
-		printf "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
-        { echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install..."; echo; }
+		printf '%s\n' "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
+        printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
 	fi
 	
 	# Copying files
-	{ echo "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory..."${BLUE}; }
+	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory...${BLUE}";
 	{ printf "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
-	{ sudo cp -r $DIR/wallpapers $DIR/colors $DIR/pkitty $DIR/kitty.conf /usr/local/share/pretty-kitty/; sudo cp -r $DIR/fonts/* /usr/local/share/fonts/pretty-kitty/; }
+	{ sudo cp -r "$DIR/wallpapers" "$DIR/colors" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/*" /usr/local/share/fonts/pretty-kitty/; }
 	{ sudo chmod +x /usr/local/share/pretty-kitty/pkitty; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty; }
 
 	# Verify files 
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
-		{ echo; echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed."; }
-		{ echo "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}."; echo; }
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed.";
+		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}.";
 		{ reset_color; exit 0; }
 	else
-		{ echo "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; echo; reset_color; exit 1; }
+		{ printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Error Occured."; reset_color; exit 1; }
 	fi
 }
 
