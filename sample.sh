@@ -1,2 +1,3 @@
-printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Uninstalling pretty-kitty...";
-printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Removing files from '/usr/local/share' dir.${BLUE}";
+DIR="/home/zim/pretty-kitty" 
+sudo cp -r $DIR/fonts/* /usr/local/share/fonts/pretty-kitty/ 
+
