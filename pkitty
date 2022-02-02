@@ -25,12 +25,12 @@ banner () {
 }
 
 exit_on_signal_SIGINT () {
-    { printf "\n\n%s\n" "    ${CYAN}[${RED}✗${CYAN}] ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
+    { printf "%s\n" "    ${CYAN}[${RED}✗${CYAN}] ${BLUE}Script interrupted" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
 exit_on_signal_SIGTERM () {
-    { printf "\n\n%s\n" "    ${CYAN}[${RED}*${CYAN}] ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
+    { printf "%s\n" "    ${CYAN}[${RED}*${CYAN}] ${BLUE}Script terminated" 2>&1; reload_settings; reset_color; }
     exit 0
 }
 
