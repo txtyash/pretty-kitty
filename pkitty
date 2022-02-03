@@ -124,7 +124,8 @@ apply_font_family () {
         printf '\n%s\n' "    ${BOLD}${RED} ❌ ${NORMAL} ${BLUE}${FONTS_DIR} doesn't exist${BLUE}";
         exit 1 
     fi 
-    font_name=$( fzf )
+    font_ttf=$( fzf )
+    font_name=$(fc-list | grep -i $font_ttf | head -n 1 | cut -d':' -f2)
     printf '\n%s' "    ${BOLD}${RED} ♥ ${NORMAL} ${BLUE}Changing font to: $font_name"
     sed -ie "s/.*font_family.*/font_family $font_name/g" "$KITTY_DIR/kitty.conf"
     { restart_kitty; reload_settings; exit; }
