@@ -2,7 +2,7 @@
 <h3 align='center'> :sparkle: Set light/dark themes & fonts for Kitty :sparkle: </h1>
 
 <p align='center'>
-<img src="images/preview.png" /><br>
+<img src="images/banner.png" /><br>
 <strong> :jack_o_lantern: pretty-kitty is a fork of kitty-cat with added features and minor tweaks</strong>
 </p>
 
