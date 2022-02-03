@@ -8,7 +8,7 @@
 
 ### Dependencies :couple:
 ```
-kitty fzf git sed grep egrep find wget
+kitty fzf git sed grep find wget
 ```
 
 ### Installation :rainbow:
