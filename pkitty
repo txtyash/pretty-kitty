@@ -153,7 +153,7 @@ select_wall () {
 	if ! grep --quiet 'background_image' "${KITTY_DIR}/kitty.conf"; then
         banner
 		printf '\n%s\n' "    ${BOLD}${RED} ➕ ${NORMAL} ${BLUE}Adding background_image option to kitty config..."
-		printf '%s\n' "#background_image" >> "${KITTY_DIR}/kitty.conf"
+		printf '\n%s' "#background_image" >> "${KITTY_DIR}/kitty.conf"
 	fi
     sed -ie "s|.*background_image.*|background_image $wallpaper|g" "$KITTY_DIR/kitty.conf"
     printf '\n%s' "    ${BOLD}${GREEN} ✔️ ${NORMAL} ${BLUE}Wallpaper Set To: ${wallpaper##*/}"
