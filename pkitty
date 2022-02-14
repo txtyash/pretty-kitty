@@ -263,7 +263,7 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
 show_help() {
     cat << EOF
 
-Randomly select & apply an kitty color theme
+Apply themes and fonts in KITTY
 ${DEFAULT_FG}
 USAGE: ${0##*/} [OPTIONS]
 
