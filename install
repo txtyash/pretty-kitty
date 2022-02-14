@@ -107,7 +107,7 @@ install_pkitty () {
 	# Copying files
 	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory...${BLUE}";
 	{ printf '%s\n' "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
-	{ sudo cp -r "$DIR/wallpapers" "$DIR/colors" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* /usr/local/share/fonts/pretty-kitty/; }
+	{ sudo cp -r "$DIR/colors" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* /usr/local/share/fonts/pretty-kitty/; }
 	{ sudo chmod +x /usr/local/share/pretty-kitty/pkitty; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty; }
 
 	# Verify files 

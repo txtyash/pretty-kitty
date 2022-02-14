@@ -159,6 +159,14 @@ random_dark () {
     fi
     { reload_settings; reset_color; exit; }
 }
+ 
+toggle_theme () {
+    if grep -Ewq 'dark' "/tmp/kitty_theme.txt"; then
+        random_light
+    else
+        random_dark
+    fi 
+} 
 
 import_files () {
     printf '\n%s\n' "    ${WHITEBG}${BOLD}${BLACK} L ${DEFAULT_BG}${NORMAL} ${BLUE}Local File (Enter path to file)
@@ -282,6 +290,9 @@ main() {
         exit 0
     elif [ "$1" == "l" ] || [ "$1" == "-l" ] || [ "$1" == "--light" ]; then
         random_light
+        exit 0
+    elif [ "$1" == "t" ] || [ "$1" == "-t" ] || [ "$1" == "--toggle" ]; then
+        toggle_theme
         exit 0
     elif [ $# -eq 0 ]; then
         interface
