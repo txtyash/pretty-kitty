@@ -208,6 +208,7 @@ update_pkitty () {
 }
 
 interface() {
+until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
         banner
         printf '\n%s' "
         ${BLACKBG}${BOLD}${WHITE} D ${DEFAULT_BG}${NORMAL}${BLUE} Select Dark Theme(${total_dark})
