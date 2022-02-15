@@ -218,7 +218,6 @@ update_pkitty () {
         fi 
         git pull
     fi
-    chmod +x ./* 
     sh install 
     { reload_settings; reset_color; exit; }
 }
