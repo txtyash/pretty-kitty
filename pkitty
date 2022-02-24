@@ -267,9 +267,9 @@ ${DEFAULT_FG}
 USAGE: ${0##*/} [OPTIONS]
 
 OPTIONS:
-    ${BOLD}${GREEN} -h${NORMAL}${DEFAULT_FG}, --help        Show this help message
-    ${BOLD}${GREEN} -d${NORMAL}${DEFAULT_FG}, --dark        Select a random dark theme
-    ${BOLD}${GREEN} -l${NORMAL}${DEFAULT_FG}, --light       Select a random light theme
+    ${BOLD}${GREEN} h, -h${NORMAL}${DEFAULT_FG}, --help        Show this help message
+    ${BOLD}${GREEN} d, -d${NORMAL}${DEFAULT_FG}, --dark        Select a random dark theme
+    ${BOLD}${GREEN} l, -l${NORMAL}${DEFAULT_FG}, --light       Select a random light theme
 EOF
 }
 
