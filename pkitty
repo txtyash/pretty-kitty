@@ -270,6 +270,7 @@ OPTIONS:
     ${BOLD}${GREEN} h, -h${NORMAL}${DEFAULT_FG}, --help        Show this help message
     ${BOLD}${GREEN} d, -d${NORMAL}${DEFAULT_FG}, --dark        Select a random dark theme
     ${BOLD}${GREEN} l, -l${NORMAL}${DEFAULT_FG}, --light       Select a random light theme
+    ${BOLD}${GREEN} t, -t${NORMAL}${DEFAULT_FG}, --toggle      Toggle theme
 EOF
 }
 
