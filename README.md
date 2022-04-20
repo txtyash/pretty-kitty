@@ -14,14 +14,8 @@ kitty fzf git sed grep find wget
 ### Installation :rainbow:
 
 ```
-git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty
-```
-cd into the cloned directory:
-```
-cd $HOME/pretty-kitty
-```
-Run the installer:
-```
+git clone https://github.com/zim0369/pretty-kitty $HOME/.pretty-kitty
+cd $HOME/.pretty-kitty
 sh install
 ```
 All done! :heavy_check_mark:
@@ -55,3 +49,5 @@ Aniket: https://github.com/AniketS01
 Aditya Shakya: https://github.com/adi1090x 
 
 Rajasegar: https://github.com/rajasegar
+
+Spy Lima: https://github.com/spylima
