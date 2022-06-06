@@ -7,28 +7,25 @@
 </p>
 
 ### Dependencies :couple:
-```
-kitty fzf git sed grep find wget
-```
+
+    kitty fzf git sed grep find wget
 
 ### Installation :rainbow:
 
-```
-git clone https://github.com/zim0369/pretty-kitty $HOME/.pretty-kitty
-cd $HOME/.pretty-kitty
-sh install
-```
-All done! :heavy_check_mark:
+    git clone https://github.com/zim0369/pretty-kitty $HOME/.pretty-kitty
+    cd $HOME/.pretty-kitty
+    sh install
+
+All done! :heavy\_check\_mark:
 
 Now use command `pkitty`
 
-### Uninstall :broken_heart:
-```
-cd $HOME/pretty-kitty
-./uninstall
-```
+### Uninstall :broken\_heart:
 
-### Tip :spiral_notepad:
+    cd $HOME/pretty-kitty
+    ./uninstall
+
+### Tip :spiral\_notepad:
 
 For quickly switching theme:
 
@@ -39,15 +36,3 @@ Light: `-l` flag
 Upload images to imgur: `-u` flag
 
 BTW, Doesn't work on WINDOWS
-
-### Credits :hugs:
-
-stewie410: https://www.reddit.com/user/stewie410/ 
-
-Aniket: https://github.com/AniketS01
-
-Aditya Shakya: https://github.com/adi1090x 
-
-Rajasegar: https://github.com/rajasegar
-
-Spy Lima: https://github.com/spylima
