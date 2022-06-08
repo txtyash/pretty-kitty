@@ -91,7 +91,8 @@ select_light () {
         printf '\n%s\n' "    ${BOLD}${RED} ❌ ${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
         return 1
     fi
-	printf '%s' "light" > "/tmp/kitty_theme.txt"
+    printf '%s' "${scheme}" > "/tmp/kitty_theme_name.txt"
+    printf '%s' "light" > "/tmp/kitty_theme.txt"
     { reload_settings; reset_color; exit; }
 }
 
@@ -106,7 +107,8 @@ select_dark () {
         printf '\n%s\n' "    ${BOLD}${RED} ❌ ${NORMAL} ${BLUE}Failed to apply theme${BLUE}";
         return 1
     fi
-	printf '%s' "dark" > "/tmp/kitty_theme.txt"
+    printf '%s' "${scheme}" > "/tmp/kitty_theme_name.txt"
+    printf '%s' "dark" > "/tmp/kitty_theme.txt"
     { reload_settings; reset_color; exit; }
 }
 
@@ -153,7 +155,9 @@ random_light () {
         printf '%s\n' "    ${BOLD}${RED} ❌ ${NORMAL} ${BLUE}Failed to apply theme!" >&2
         return 1
     fi
-	printf '%s' "light" > "/tmp/kitty_theme.txt"
+    printf %s "${random_scheme##*/}" > "/tmp/kitty_theme_name.txt"
+    echo "${scheme}" 
+    printf '%s' "light" > "/tmp/kitty_theme.txt"
     { reload_settings; reset_color; exit; }
 }
 
@@ -164,7 +168,8 @@ random_dark () {
         printf '%s\n' "    ${BOLD}${RED} ❌ ${NORMAL} ${BLUE}Failed to apply theme!" >&2
         return 1
     fi
-	printf '%s' "dark" > "/tmp/kitty_theme.txt"
+    printf %s "${random_scheme##*/}" > "/tmp/kitty_theme_name.txt"
+    printf '%s' "dark" > "/tmp/kitty_theme.txt"
     { reload_settings; reset_color; exit; }
 }
  
@@ -260,9 +265,10 @@ until [[ "$REPLY" =~ ^[q/Q]$ ]]; do
 }
 
 show_help() {
+    theme=`cat /tmp/kitty_theme_name.txt`
+     
+    printf '\n%s\n' "Current Theme: '${RED}${theme}${DEFAULT_FG}'";
     cat << EOF
-
-Apply themes and fonts in KITTY
 ${DEFAULT_FG}
 USAGE: ${0##*/} [OPTIONS]
 

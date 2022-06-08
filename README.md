@@ -29,10 +29,11 @@ Now use command `pkitty`
 
 For quickly switching theme:
 
-Dark: `-d` flag
+Dark: `d` flag
 
-Light: `-l` flag
+Light: `l` flag
 
-Upload images to imgur: `-u` flag
+Currently applied theme can be seen in the help menu:
+`pkitty h`
 
 BTW, Doesn't work on WINDOWS
