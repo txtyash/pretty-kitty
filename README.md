@@ -36,4 +36,8 @@ Light: `l` flag
 Currently applied theme can be seen in the help menu:
 `pkitty h`
 
+You could create a mapping in kitty to easily toggle between light and dark
+colorscheme:
+`map alt+c launch pkitty t`
+
 BTW, Doesn't work on WINDOWS
