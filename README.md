@@ -12,8 +12,8 @@
 
 ### Installation :rainbow:
 
-    git clone https://github.com/zim0369/pretty-kitty $HOME/.pretty-kitty
-    cd $HOME/.pretty-kitty
+    git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty
+    cd $HOME/pretty-kitty
     sh install
 
 All done! :heavy\_check\_mark:
