@@ -3,18 +3,23 @@
 
 <p align='center'>
 <img src="images/banner.png" /><br>
-<strong> :jack_o_lantern: pretty-kitty is a fork of kitty-cat with added features and minor tweaks</strong>
 </p>
+
+**LINUX ONLY**
 
 ### Dependencies :couple:
 
-    kitty fzf git sed grep find wget
+```
+kitty fzf git sed grep find wget
+```
 
 ### Installation :rainbow:
 
-    git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty
-    cd $HOME/pretty-kitty
-    sh install
+```
+git clone https://github.com/zim0369/pretty-kitty $HOME/pretty-kitty
+cd $HOME/pretty-kitty
+sh install
+```
 
 All done! :heavy\_check\_mark:
 
@@ -22,8 +27,10 @@ Now use command `pkitty`
 
 ### Uninstall :broken\_heart:
 
-    cd $HOME/pretty-kitty
-    ./uninstall
+```
+cd $HOME/pretty-kitty
+./uninstall
+```
 
 ### Tip :spiral\_notepad:
 
