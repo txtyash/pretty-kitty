@@ -2,8 +2,8 @@
 <h3 align='center'> :sparkle: Set light/dark themes & fonts for Kitty :sparkle: </h1>
 
 <p align='center'>
+<b>Project has been abandoned</b>
 <img src="images/banner.png" /><br>
-<b>Works on Linux only</b>
 </p>
 
 ### Dependencies :couple:
