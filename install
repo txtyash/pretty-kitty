@@ -46,7 +46,7 @@ trap exit_on_signal_SIGTERM SIGTERM
 reset_color() {
 	tput sgr0   # reset attributes
 	tput op     # reset color
-    return
+  return
 }
 
 ## Prerequisite
@@ -84,8 +84,10 @@ install_pkitty () {
 	# Delete old files
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation...${BLUE}"
-        { printf '%s\n' "    "; sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty; }
+    printf '%s\n' "    "
+    sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty
 	fi
+   
 	# pretty-kitty config dir
 	if [[ ! -d $KITTY_DIR ]]; then
 		mkdir "$KITTY_DIR"
@@ -94,21 +96,26 @@ install_pkitty () {
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
 		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Cannot find kitty configuration: '${KITTY_DIR}/kitty.conf'${BLUE}"
 		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Creating one for you...${BLUE}"
-	    cp "$DIR/kitty.conf" "$KITTY_DIR"
-        printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
+    cp "$DIR/kitty.conf" "$KITTY_DIR"
+    printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
 	fi
+   
+  if [ ! -f "${KITTY_DIR}/colors.conf" ]; then
+      touch "${KITTY_DIR}/colors.conf"
+  fi
      
 	if ! grep --quiet 'colors\.conf' "${KITTY_DIR}/kitty.conf"; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Adding pretty-kitty import to kitty config..."
 		printf '%s\n' "include ${KITTY_DIR}/colors.conf" >> "${KITTY_DIR}/kitty.conf"
-        printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
+    printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${RED}Please restart kitty after install...";
 	fi
 	
 	# Copying files
 	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory...${BLUE}";
 	{ printf '%s\n' "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
-	{ sudo cp -r "$DIR/colors" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* /usr/local/share/fonts/pretty-kitty/; }
-	{ sudo chmod +x /usr/local/share/pretty-kitty/pkitty; sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty; }
+	{ sudo cp -r "$DIR/colors" "$DIR/uninstall" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* /usr/local/share/fonts/pretty-kitty/; }
+	sudo chmod +x /usr/local/share/pretty-kitty/pkitty /usr/local/share/pretty-kitty/uninstall;
+  sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty;
 
 	# Verify files 
 	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
@@ -124,7 +131,7 @@ install_pkitty () {
 main () {
 	prerequisite
 	check_prev
-    banner
+  banner
 }
 
 main
