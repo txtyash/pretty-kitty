@@ -3,9 +3,8 @@
 
 <p align='center'>
 <img src="images/banner.png" /><br>
+<b>Works on Linux only</b>
 </p>
-
-**LINUX ONLY**
 
 ### Dependencies :couple:
 
@@ -46,5 +45,3 @@ Currently applied theme can be seen in the help menu:
 You could create a mapping in kitty to easily toggle between light and dark
 colorscheme:
 `map alt+c launch pkitty t`
-
-BTW, Doesn't work on WINDOWS
