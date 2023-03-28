@@ -1,8 +1,11 @@
+<p align='center'>
+<b><i>Project has been abandoned. Will not be maintained. Fork it :heart:</i></b>
+</p>
+
 <h2 align='center'> :unicorn: Pretty-Kitty :unicorn: </h1>
 <h3 align='center'> :sparkle: Set light/dark themes & fonts for Kitty :sparkle: </h1>
 
 <p align='center'>
-<b>Project has been abandoned</b>
 <img src="images/banner.png" /><br>
 </p>
 
