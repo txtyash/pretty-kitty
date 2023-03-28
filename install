@@ -16,7 +16,26 @@ DEFAULT_FG="$(printf '\033[39m')"  DEFAULT_BG="$(printf '\033[49m')"
 
 ## Directories
 DIR="$(pwd)"
+ROOT="/usr/local"
 KITTY_DIR="$HOME/.config/kitty"
+
+## Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -r|--root)
+      ROOT="$2"
+      shift 2
+      ;;
+    -k|--kitty-dir)
+      KITTY_DIR="$2"
+      shift 2
+      ;;
+    *)
+      echo "Invalid option: $1" >&2
+      exit 1
+      ;;
+  esac
+done
 
 ## Banner
 banner () {
@@ -64,7 +83,7 @@ prerequisite() {
 ## Check for previous installation
 check_prev () {
 	banner
-	if [[ (-L /usr/local/bin/pkitty) || (-f /usr/local/bin/pkitty) ]]; then
+	if [[ (-L $ROOT/bin/pkitty) || (-f $ROOT/bin/pkitty) ]]; then
 		printf '%s\n' "    ${BLUE}[${RED}!${BLUE}] ${MAGENTA}pretty-kitty ${GREEN}is already installed.";
 		{ read -r -n 1 -p "    ${BLUE}[${RED}?${BLUE}] ${ORANGE}Do you wish to update? (y/n): ${GREEN}"; printf "\n"; }
 		if [[ "$REPLY" =~ ^[y/Y]$ ]]; then
@@ -82,15 +101,15 @@ check_prev () {
 install_pkitty () {
 	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Installing pretty-kitty..."
 	# Delete old files
-	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L $ROOT/bin/pkitty) && (-d $ROOT/share/pretty-kitty) ]]; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${RED}Deleting files from previous installation...${BLUE}"
     printf '%s\n' "    "
-    sudo rm -r /usr/local/bin/pkitty /usr/local/share/pretty-kitty /usr/local/share/fonts/pretty-kitty
+    sudo rm -r $ROOT/bin/pkitty $ROOT/share/pretty-kitty $ROOT/share/fonts/pretty-kitty
 	fi
    
 	# pretty-kitty config dir
 	if [[ ! -d $KITTY_DIR ]]; then
-		mkdir "$KITTY_DIR"
+		mkdir -p "$KITTY_DIR"
 	fi
      
 	if ! [ -s "${KITTY_DIR}/kitty.conf" ]; then
@@ -111,14 +130,14 @@ install_pkitty () {
 	fi
 	
 	# Copying files
-	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '/usr/local/share' directory...${BLUE}";
-	{ printf '%s\n' "    "; sudo mkdir /usr/local/share/pretty-kitty; sudo mkdir -p /usr/local/share/fonts/pretty-kitty; }
-	{ sudo cp -r "$DIR/colors" "$DIR/uninstall" "$DIR/pkitty" "$DIR/kitty.conf" /usr/local/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* /usr/local/share/fonts/pretty-kitty/; }
-	sudo chmod +x /usr/local/share/pretty-kitty/pkitty /usr/local/share/pretty-kitty/uninstall;
-  sudo fc-cache; sudo ln -s /usr/local/share/pretty-kitty/pkitty /usr/local/bin/pkitty;
+	printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${ORANGE}Copying files to '$ROOT/share' directory...${BLUE}";
+	{ printf '%s\n' "    "; sudo mkdir -p $ROOT/share/pretty-kitty; sudo mkdir -p $ROOT/share/fonts/pretty-kitty; }
+	{ sudo cp -r "$DIR/colors" "$DIR/uninstall" "$DIR/pkitty" "$DIR/kitty.conf" $ROOT/share/pretty-kitty/; sudo cp -r "$DIR/fonts/"* $ROOT/share/fonts/pretty-kitty/; }
+	sudo chmod +x $ROOT/share/pretty-kitty/pkitty $ROOT/share/pretty-kitty/uninstall;
+  sudo fc-cache; sudo ln -s $ROOT/share/pretty-kitty/pkitty $ROOT/bin/pkitty;
 
 	# Verify files 
-	if [[ (-L /usr/local/bin/pkitty) && (-d /usr/local/share/pretty-kitty) ]]; then
+	if [[ (-L $ROOT/bin/pkitty) && (-d $ROOT/share/pretty-kitty) ]]; then
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Successfully Installed.";
 		printf '%s\n' "    ${BLUE}[${RED}*${BLUE}] ${GREEN}Now You Can Run This Program By Just typing ${MAGENTA}pkitty${GREEN}.";
 		{ reset_color; exit 0; }
